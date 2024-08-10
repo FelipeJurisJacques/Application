@@ -2,6 +2,6 @@ namespace Application.Source.Utils.Observer
 {
     public interface IObserver
     {
-        void Update();
+        void Update(Subject subject);
     }
 }

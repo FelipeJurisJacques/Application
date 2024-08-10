@@ -6,21 +6,22 @@ namespace Application.Source.Core
     {
         private readonly IJSRuntime _js;
         private readonly Display _display;
+        private readonly Console _console;
 
         public Context(IJSRuntime js)
         {
             _js = js;
             _display = new(js);
+            _console = new(js);
             _js.InvokeVoidAsync(
                 "eventsInterop.initialize",
                 DotNetObjectReference.Create(this)
             );
         }
 
-        public Display GetDisplay()
-        {
-            return _display;
-        }
+        public Console Console => _console;
+
+        public Display Display => _display;
 
         [JSInvokable]
         public void OnEvent(string type)
@@ -28,7 +29,7 @@ namespace Application.Source.Core
             switch (type)
             {
                 case "resize":
-                    _display.OnResize().Notify();
+                    _display.OnResize.Notify();
                     break;
                 default:
                     _js.InvokeVoidAsync("console.log", type);

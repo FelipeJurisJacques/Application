@@ -1,5 +1,6 @@
 @implements IObserver
-@using System.Numerics;
+@using System.Numerics
+@using Application.Source.Core
 @using Application.Source.Helpers
 @using Application.Source.Utils.Observer
 @inject Application.Source.Core.Context _context
@@ -8,7 +9,8 @@
     <clipPath id="clip">
         <polygon points="@clipPoints" />
     </clipPath>
-    @for (int i = 0; i < 100; i = i + 2) {
+    @for (int i = 0; i < 100; i = i + 2)
+    {
         <line stroke="#1a1a1a" stroke-width="1" x1="0" x2="@width" y1="@i" y2="@i" clip-path="url(#clip)" />
     }
     <polygon fill="#00f2ff" points="@polygonPoints" clip-path="url(#clip)" />
@@ -21,25 +23,20 @@
 
     protected override void OnInitialized()
     {
-        _context.GetDisplay().OnResize().Subscribe(this);
+        _context.Display.OnResize.Subscribe(this);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    public void Update(Subject display)
     {
-        if (firstRender)
+        if (display is Display.OnResizeSubject)
         {
-            await _update();
+            _update();
         }
     }
 
-    public void Update()
+    private void _update()
     {
-        _update();
-    }
-
-    private async Task _update()
-    {
-        width = await _context.GetDisplay().GetWidth();
+        width = _context.Display.Width;
         int med = width / 2;
         List<Vector2> points = [];
         points.Add(new Vector2(0, 0));
@@ -52,8 +49,8 @@
         points.Add(new Vector2(med + 40, 5));
         points.Add(new Vector2(med + 140, 5));
         points.Add(new Vector2(med + 150, 20));
-        points.Add(new Vector2(@width, 20));
-        points.Add(new Vector2(@width, 0));
+        points.Add(new Vector2(width, 20));
+        points.Add(new Vector2(width, 0));
         points.Add(new Vector2(0, 0));
         polygonPoints = SvgHelper.GeneratePointsAttribute(points);
         points = [];
@@ -66,8 +63,8 @@
         points.Add(new Vector2(med + 40, 3));
         points.Add(new Vector2(med + 140, 3));
         points.Add(new Vector2(med + 150, 18));
-        points.Add(new Vector2(@width, 18));
-        points.Add(new Vector2(@width, 100));
+        points.Add(new Vector2(width, 18));
+        points.Add(new Vector2(width, 100));
         points.Add(new Vector2(0, 100));
         points.Add(new Vector2(0, 18));
         clipPoints = SvgHelper.GeneratePointsAttribute(points);

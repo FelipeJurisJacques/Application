@@ -19,11 +19,11 @@ namespace Application.Source.Utils.Observer
             handler.Remove(observer);
         }
 
-        public void Notify()
+        public virtual void Notify()
         {
             foreach (var observer in handler)
             {
-                observer.Update();
+                observer.Update(this);
             }
         }
     }
