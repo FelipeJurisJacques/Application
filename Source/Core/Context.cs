@@ -4,20 +4,22 @@ namespace Application.Source.Core
 {
     public class Context
     {
-        private readonly IJSRuntime _js;
-        private readonly Display _display;
+        private readonly Theme _theme;
         private readonly Console _console;
+        private readonly Display _display;
 
         public Context(IJSRuntime js)
         {
-            _js = js;
-            _display = new(js);
+            _theme = new(js);
             _console = new(js);
-            _js.InvokeVoidAsync(
+            _display = new(js);
+            js.InvokeVoidAsync(
                 "eventsInterop.initialize",
                 DotNetObjectReference.Create(this)
             );
         }
+
+        public Theme Theme => _theme;
 
         public Console Console => _console;
 
@@ -32,7 +34,7 @@ namespace Application.Source.Core
                     _display.OnResize.Notify();
                     break;
                 default:
-                    _js.InvokeVoidAsync("console.log", type);
+                    Console.Log(type);
                     break;
             }
         }
