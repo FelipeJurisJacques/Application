@@ -6,20 +6,17 @@
 
 <svg viewBox="0 0 @width 100" xmlns="http://www.w3.org/2000/svg">
     <clipPath id="clip">
-        <polygon points="
-        0,0
-        0,100
-        @width,100
-        @width,0
-        1,0
-    " />
+        <polygon points="@clipPoints" />
     </clipPath>
-    <!-- <line stroke="#1a1a1a" stroke-width="1" x1="0" x2="@width" y1="0" y2="1" clip-path="url(#clip)"></line> -->
+    @for (int i = 0; i < 100; i = i + 2) {
+        <line stroke="#1a1a1a" stroke-width="1" x1="0" x2="@width" y1="@i" y2="@i" clip-path="url(#clip)" />
+    }
     <polygon fill="#00f2ff" points="@polygonPoints" clip-path="url(#clip)" />
 </svg>
 
 @code {
     private int width = 0;
+    private string clipPoints = "";
     private string polygonPoints = "";
 
     protected override void OnInitialized()
@@ -43,22 +40,37 @@
     private async Task _update()
     {
         width = await _context.GetDisplay().GetWidth();
-        List<Vector2> points = [];
         int med = width / 2;
-        points.Add(new Vector2(0,0));
-        points.Add(new Vector2(0,20));
-        points.Add(new Vector2(med - 150,20));
-        points.Add(new Vector2(med - 140,5));
-        points.Add(new Vector2(med - 40,5));
-        points.Add(new Vector2(med - 30,20));
-        points.Add(new Vector2(med + 30,20));
-        points.Add(new Vector2(med + 40,5));
-        points.Add(new Vector2(med + 140,5));
-        points.Add(new Vector2(med + 150,20));
-        points.Add(new Vector2(@width,20));
-        points.Add(new Vector2(@width,0));
-        points.Add(new Vector2(0,0));
+        List<Vector2> points = [];
+        points.Add(new Vector2(0, 0));
+        points.Add(new Vector2(0, 20));
+        points.Add(new Vector2(med - 150, 20));
+        points.Add(new Vector2(med - 140, 5));
+        points.Add(new Vector2(med - 40, 5));
+        points.Add(new Vector2(med - 30, 20));
+        points.Add(new Vector2(med + 30, 20));
+        points.Add(new Vector2(med + 40, 5));
+        points.Add(new Vector2(med + 140, 5));
+        points.Add(new Vector2(med + 150, 20));
+        points.Add(new Vector2(@width, 20));
+        points.Add(new Vector2(@width, 0));
+        points.Add(new Vector2(0, 0));
         polygonPoints = SvgHelper.GeneratePointsAttribute(points);
+        points = [];
+        points.Add(new Vector2(0, 18));
+        points.Add(new Vector2(med - 150, 18));
+        points.Add(new Vector2(med - 140, 3));
+        points.Add(new Vector2(med - 40, 3));
+        points.Add(new Vector2(med - 30, 18));
+        points.Add(new Vector2(med + 30, 18));
+        points.Add(new Vector2(med + 40, 3));
+        points.Add(new Vector2(med + 140, 3));
+        points.Add(new Vector2(med + 150, 18));
+        points.Add(new Vector2(@width, 18));
+        points.Add(new Vector2(@width, 100));
+        points.Add(new Vector2(0, 100));
+        points.Add(new Vector2(0, 18));
+        clipPoints = SvgHelper.GeneratePointsAttribute(points);
         StateHasChanged();
     }
 }
