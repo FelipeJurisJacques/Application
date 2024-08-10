@@ -1,7 +1,7 @@
-footer.footer {
+footer {
     left: 0px;
     width: 100%;
     bottom: 0px;
     height: 100px;
-    position: absolute;
+    position: fixed;
 }
