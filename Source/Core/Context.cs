@@ -4,13 +4,13 @@ namespace Application.Source.Core
 {
     public class Context
     {
-        private readonly Theme _theme;
+        private readonly Themes _themes;
         private readonly Console _console;
         private readonly Display _display;
 
         public Context(IJSRuntime js)
         {
-            _theme = new(js);
+            _themes = new(js);
             _console = new(js);
             _display = new(js);
             js.InvokeVoidAsync(
@@ -19,7 +19,7 @@ namespace Application.Source.Core
             );
         }
 
-        public Theme Theme => _theme;
+        public Themes Themes => _themes;
 
         public Console Console => _console;
 
@@ -31,7 +31,7 @@ namespace Application.Source.Core
             switch (type)
             {
                 case "resize":
-                    _display.OnResize.Notify();
+                    Display.OnResize.Notify();
                     break;
                 default:
                     Console.Log(type);

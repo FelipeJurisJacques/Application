@@ -8,21 +8,21 @@ namespace Application.Source.Core
         private int _width;
         private int _height;
         private readonly IJSRuntime _js;
-        private readonly OnResizeSubject _onResize;
+        private readonly Subject _subject;
 
-        public Display(IJSRuntime jsRuntime)
+        public Display(IJSRuntime js)
         {
-            _js = jsRuntime;
+            _js = js;
             _width = 0;
             _height = 0;
-            _onResize = new(this);
+            _subject = new OnResizeSubject(this);
         }
 
         public int Width => _width;
 
         public int Height => _height;
 
-        public OnResizeSubject OnResize => _onResize;
+        public Subject OnResize => _subject;
 
         public class OnResizeSubject : Subject
         {
