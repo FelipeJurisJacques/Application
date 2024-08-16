@@ -6,39 +6,43 @@ namespace Application.Source.Core
     public class Themes(IJSRuntime js) : List<Theme>()
     {
         private int current = 0;
-        private readonly Subject subject = new OnChangeSubject(js);
+        private readonly IJSRuntime js = js;
+        private readonly Subject subject = new OnChangeSubject();
 
         public Theme Theme => this[current];
 
-        public string Current
-        {
-            get
-            {
-                return Theme.Name;
-            }
-            set
-            {
-                for (var i = 0; i < Count; i++)
-                {
-                    if (value == this[i].Name)
-                    {
-                        current = i;
-                        break;
-                    }
-                }
-            }
-        }
-
         public Subject OnChange => subject;
 
-        public class OnChangeSubject(IJSRuntime js) : Subject
+        public async Task<bool> SetCurrentThemeName(string name)
         {
-            private readonly IJSRuntime _js = js;
-
-            public async Task<string> GetCurrentThemeName()
+            for (var i = 0; i < Count; i++)
             {
-                return await _js.InvokeAsync<string>("localStorage.getItem", "theme");
+                if (name == this[i].Name)
+                {
+                    if (i != current)
+                    {
+                        current = i;
+                        subject.Notify();
+                        await js.InvokeVoidAsync("localStorage.setItem", "theme", name);
+                    }
+                    return true;
+                }
             }
+            return false;
         }
+
+        public async Task<string> GetCurrentThemeName()
+        {
+            var name = await js.InvokeAsync<string>("localStorage.getItem", "theme");
+            if (name != "" && name != Theme.Name)
+            {
+                if (await SetCurrentThemeName(name)) {
+                    return name;
+                }
+            }
+            return "";
+        }
+
+        public class OnChangeSubject : Subject { }
     }
 }
