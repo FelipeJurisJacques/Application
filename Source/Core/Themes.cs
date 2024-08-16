@@ -3,15 +3,30 @@ using Application.Source.Utils.Observer;
 
 namespace Application.Source.Core
 {
-    public class Themes(IJSRuntime js)
+    public class Themes(IJSRuntime js) : List<Theme>()
     {
+        private int current = 0;
         private readonly Subject subject = new OnChangeSubject(js);
-        private Theme _theme = new("default", ThemeType.HIGH_CONTRAST, "wite", "black");
 
-        public Theme Theme
+        public Theme Theme => this[current];
+
+        public string Current
         {
-            get { return _theme; }
-            set { _theme = value; }
+            get
+            {
+                return Theme.Name;
+            }
+            set
+            {
+                for (var i = 0; i < Count; i++)
+                {
+                    if (value == this[i].Name)
+                    {
+                        current = i;
+                        break;
+                    }
+                }
+            }
         }
 
         public Subject OnChange => subject;
