@@ -1,16 +1,33 @@
+@using Application.Source.Layout.Svgs
 @inject Application.Source.Core.Context context
 
 <footer>
-    <button @onclick="ToggleDropdown" type="button" title="theme">
-        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="50" r="50" />
-        </svg>
+    <button class="bar" @onclick="ToggleDropdown" type="button" title="theme">
+        @switch (context.Themes.Theme.Name)
+        {
+            case "dark":
+            default:
+                <Moon />
+                break;
+        }
     </button>
     @if (showDropdown)
     {
-        <ul>
+        <ul class="dropdown">
             <li>
-                <button>
+                <button @onclick="SetDarkTheme" type="button">
+                    <Moon />
+                </button>
+            </li>
+            <li>
+                <button @onclick="SetLightTheme">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <circle fill="wite" cx="50" cy="50" r="50" />
+                    </svg>
+                </button>
+            </li>
+            <li>
+                <button @onclick="SetHighContrastTheme">
                     <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                         <circle fill="wite" cx="50" cy="50" r="50" />
                     </svg>
@@ -18,7 +35,6 @@
             </li>
         </ul>
     }
-    <Application.Source.Layout.Svgs.Footer />
 </footer>
 
 @code {
@@ -32,5 +48,15 @@
     private async void SetDarkTheme()
     {
         await context.Themes.SetCurrentThemeName("dark");
+    }
+
+    private async void SetLightTheme()
+    {
+        await context.Themes.SetCurrentThemeName("light");
+    }
+
+    private async void SetHighContrastTheme()
+    {
+        await context.Themes.SetCurrentThemeName("high_contrast");
     }
 }

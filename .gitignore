@@ -1,6 +1,7 @@
 # Ignore diretórios de build
 bin/
 obj/
+obj/Debug
 
 # Ignore arquivos de logs
 *.log
