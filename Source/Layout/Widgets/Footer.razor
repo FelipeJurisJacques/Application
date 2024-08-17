@@ -5,36 +5,35 @@
     <button class="bar" @onclick="ToggleDropdown" type="button" title="theme">
         @switch (context.Themes.Theme.Name)
         {
+            case "light":
+                <Sun />
+                break;
+            case "high_contrast":
+                <HighContrast />
+                break;
             case "dark":
             default:
                 <Moon />
                 break;
         }
     </button>
-    @if (showDropdown)
-    {
-        <ul class="dropdown">
-            <li>
-                <button @onclick="SetDarkTheme" type="button">
-                    <Moon />
-                </button>
-            </li>
-            <li>
-                <button @onclick="SetLightTheme">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle fill="wite" cx="50" cy="50" r="50" />
-                    </svg>
-                </button>
-            </li>
-            <li>
-                <button @onclick="SetHighContrastTheme">
-                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <circle fill="wite" cx="50" cy="50" r="50" />
-                    </svg>
-                </button>
-            </li>
-        </ul>
-    }
+    <ul class="@(showDropdown ? "visible" : "hidden")">
+        <li>
+            <button @onclick="SetDarkTheme" type="button">
+                <Moon />
+            </button>
+        </li>
+        <li>
+            <button @onclick="SetLightTheme">
+                <Sun />
+            </button>
+        </li>
+        <li>
+            <button @onclick="SetHighContrastTheme">
+                <HighContrast />
+            </button>
+        </li>
+    </ul>
 </footer>
 
 @code {
@@ -43,6 +42,7 @@
     private void ToggleDropdown()
     {
         showDropdown = !showDropdown;
+        StateHasChanged();
     }
 
     private async void SetDarkTheme()

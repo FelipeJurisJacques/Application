@@ -16,12 +16,20 @@ button.bar {
     background-color: transparent;
 }
 
-ul.dropdown button.bar {
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+
+ul {
     left: calc(50% + 100px);
     width: 50px;
     border: 0px;
-    height: 50px;
+    height: 150px;
     bottom: 50px;
     position: fixed;
-    background-color: transparent;
+    background-color: #0005;
 }
