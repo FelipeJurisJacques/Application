@@ -10,24 +10,39 @@
 <body>
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script> -->
     <!-- <script src="index.js"></script> -->
-    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <path d="
-            M 50,90
-            A 1,1 0 0 1 50,10
-            M 50,10
-            Z
-            "
-            fill="blue"
-        />
-        <circle
-            cx="50"
-            cy="50"
-            r="40"
-            stroke="blue"
-            stroke-width="2"
-            fill="transparent"
-        />
-    </svg>
+    <style>
+        ul {
+            left: 100px;
+            width: 30px;
+            bottom: 100px;
+            padding: 0px;
+            position: fixed;
+            list-style-type: none;
+            background-color: #0003;
+        }
+
+        button {
+            width: 30px;
+            border: 0px;
+            padding: 0px;
+            background-color: transparent;
+        }
+    </style>
+    <ul>
+        <li>
+            <button type="button">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="
+                    M 50,90
+                    A 1,1 0 0 1 50,10
+                    M 50,10
+                    Z
+                    " fill="blue" />
+                    <circle cx="50" cy="50" r="40" stroke="blue" stroke-width="2" fill="transparent" />
+                </svg>
+            </button>
+        </li>
+    </ul>
 </body>
 
 </html>

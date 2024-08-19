@@ -2,6 +2,7 @@
 @inject Application.Source.Core.Context context
 
 <footer>
+    <Application.Source.Layout.Svgs.Footer />
     <button class="bar" @onclick="ToggleDropdown" type="button" title="theme">
         @switch (context.Themes.Theme.Name)
         {

@@ -6,22 +6,18 @@ footer {
     position: fixed;
 }
 
-button.bar {
-    left: calc(50% + 100px);
+button {
     width: 50px;
     border: 0px;
-    height: 50px;
-    bottom: 0px;
-    position: fixed;
+    padding: 0px;
     background-color: transparent;
 }
 
-.visible {
-    display: block;
-}
-
-.hidden {
-    display: none;
+button.bar {
+    left: calc(50% + 100px);
+    height: 50px;
+    bottom: 0px;
+    position: fixed;
 }
 
 ul {
@@ -30,6 +26,16 @@ ul {
     border: 0px;
     height: 150px;
     bottom: 50px;
+    padding: 0px;
     position: fixed;
+    list-style-type: none;
     background-color: #0005;
+}
+
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
 }
