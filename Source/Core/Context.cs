@@ -2,28 +2,27 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Core
 {
-    public class Context
+    public class Context(IJSRuntime js)
     {
-        private readonly Themes _themes;
-        private readonly Console _console;
-        private readonly Display _display;
-
-        public Context(IJSRuntime js)
-        {
-            _themes = new(js);
-            _console = new(js);
-            _display = new(js);
-            js.InvokeVoidAsync(
-                "eventsInterop.initialize",
-                DotNetObjectReference.Create(this)
-            );
-        }
+        private readonly IJSRuntime _js = js;
+        private readonly Themes _themes = new(js);
+        private readonly Console _console = new(js);
+        private readonly Display _display = new(js);
 
         public Themes Themes => _themes;
 
         public Console Console => _console;
 
         public Display Display => _display;
+
+        public async void Initialize(){
+            Themes.Initialize();
+            Display.Initialize();
+            await _js.InvokeVoidAsync(
+                "eventsInterop.initialize",
+                DotNetObjectReference.Create(this)
+            );
+        }
 
         [JSInvokable]
         public void OnEvent(string type)

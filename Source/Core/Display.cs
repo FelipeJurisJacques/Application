@@ -3,20 +3,12 @@ using Application.Source.Utils.Observer;
 
 namespace Application.Source.Core
 {
-    public class Display
+    public class Display(IJSRuntime js)
     {
-        private int _width;
-        private int _height;
-        private readonly IJSRuntime _js;
-        private readonly Subject _subject;
-
-        public Display(IJSRuntime js)
-        {
-            _js = js;
-            _width = 0;
-            _height = 0;
-            _subject = new OnResizeSubject(this);
-        }
+        private int _width = 0;
+        private int _height = 0;
+        private readonly IJSRuntime _js = js;
+        private readonly Subject _subject = new OnResizeSubject();
 
         public int Width => _width;
 
@@ -24,27 +16,18 @@ namespace Application.Source.Core
 
         public Subject OnResize => _subject;
 
-        public class OnResizeSubject : Subject
+        public async void Initialize()
         {
-            private Display _display;
-
-            public OnResizeSubject(Display display)
-            {
-                _display = display;
-                _update();
-            }
-
-            public override void Notify()
-            {
-                _update();
-            }
-
-            private async Task _update()
-            {
-                _display._width = await _display._js.InvokeAsync<int>("eval", "window.innerWidth");
-                _display._height = await _display._js.InvokeAsync<int>("eval", "window.innerHeight");
-                base.Notify();
-            }
+            await Update();
+            OnResize.Notify();
         }
+
+        public async Task Update()
+        {
+            _width = await _js.InvokeAsync<int>("eval", "window.innerWidth");
+            _height = await _js.InvokeAsync<int>("eval", "window.innerHeight");
+        }
+
+        public class OnResizeSubject : Subject { }
     }
 }

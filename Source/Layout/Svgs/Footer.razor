@@ -2,10 +2,10 @@
 @using Application.Source.Core
 @using Application.Source.Helpers
 @using Application.Source.Utils.Observer
-@inject Application.Source.Core.Context _context
+@inject Application.Source.Core.Context context
 @implements IObserver
 
-<svg viewBox="0 0 @width 100" xmlns="http://www.w3.org/2000/svg">
+<svg width="@width" height="100" viewBox="0 0 @width 100" xmlns="http://www.w3.org/2000/svg">
     <clipPath id="clip">
         <polygon points="@clipPoints" />
     </clipPath>
@@ -23,7 +23,7 @@
 
     protected override void OnInitialized()
     {
-        _context.Display.OnResize.Subscribe(this);
+        context.Display.OnResize.Subscribe(this);
     }
 
     public void Update(Subject display)
@@ -36,7 +36,7 @@
 
     private void _update()
     {
-        width = _context.Display.Width;
+        width = context.Display.Width;
         int med = width / 2;
         List<Vector2> points = [];
         points.Add(new Vector2(0, 0));

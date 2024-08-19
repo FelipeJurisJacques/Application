@@ -13,6 +13,11 @@ namespace Application.Source.Core
 
         public Subject OnChange => subject;
 
+        public async void Initialize()
+        {
+            await GetCurrentThemeName();
+        }
+
         public async Task<bool> SetCurrentThemeName(string name)
         {
             for (var i = 0; i < Count; i++)
@@ -36,7 +41,8 @@ namespace Application.Source.Core
             var name = await js.InvokeAsync<string>("localStorage.getItem", "theme");
             if (name != "" && name != Theme.Name)
             {
-                if (await SetCurrentThemeName(name)) {
+                if (await SetCurrentThemeName(name))
+                {
                     return name;
                 }
             }

@@ -7,7 +7,8 @@ footer {
 }
 
 button {
-    width: 50px;
+    width: 35px;
+    height: 35px;
     border: 0px;
     padding: 0px;
     background-color: transparent;
@@ -22,9 +23,9 @@ button.bar {
 
 ul {
     left: calc(50% + 100px);
-    width: 50px;
+    width: 35px;
     border: 0px;
-    height: 150px;
+    height: 90px;
     bottom: 50px;
     padding: 0px;
     position: fixed;
