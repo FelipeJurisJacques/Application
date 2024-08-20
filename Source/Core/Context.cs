@@ -16,12 +16,12 @@ namespace Application.Source.Core
         public Display Display => _display;
 
         public async void Initialize(){
-            Themes.Initialize();
-            Display.Initialize();
             await _js.InvokeVoidAsync(
                 "eventsInterop.initialize",
                 DotNetObjectReference.Create(this)
             );
+            Themes.Initialize();
+            Display.Initialize();
         }
 
         [JSInvokable]
