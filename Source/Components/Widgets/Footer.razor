@@ -1,11 +1,11 @@
 @using Application.Source.Core
-@using Application.Source.Layout.Svgs
 @using Application.Source.Utils.Observer
+@using Application.Source.Components.Svgs
 @inject Application.Source.Core.Context context
 @implements IObserver
 
 <footer>
-    <Application.Source.Layout.Svgs.Footer />
+    <Application.Source.Components.Svgs.Footer />
     <button class="bar" @onclick="ToggleDropdown" type="button" title="theme">
         @switch (context.Themes.Theme.Name)
         {

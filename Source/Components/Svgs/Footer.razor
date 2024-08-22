@@ -50,7 +50,7 @@
             points.Add(new Vector2(width, 20));
             points.Add(new Vector2(width, 0));
             points.Add(new Vector2(0, 0));
-            polygonPoints = SvgHelper.GeneratePointsAttribute(points);
+            polygonPoints = Svg.GeneratePointsAttribute(points);
             points = [];
             points.Add(new Vector2(0, 18));
             points.Add(new Vector2(med - 150, 18));
@@ -65,7 +65,7 @@
             points.Add(new Vector2(width, 100));
             points.Add(new Vector2(0, 100));
             points.Add(new Vector2(0, 18));
-            clipPoints = SvgHelper.GeneratePointsAttribute(points);
+            clipPoints = Svg.GeneratePointsAttribute(points);
         }
         StateHasChanged();
     }

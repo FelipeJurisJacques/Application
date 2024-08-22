@@ -2,7 +2,7 @@ using System.Numerics;
 
 namespace Application.Source.Helpers
 {
-    public static class SvgHelper
+    public static class Svg
     {
         public static string GeneratePointsAttribute(List<Vector2> points)
         {
