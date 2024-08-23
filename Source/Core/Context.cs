@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using Application.Source.Core.Storage.IndexedDb;
 
 namespace Application.Source.Core
 {
@@ -8,6 +9,7 @@ namespace Application.Source.Core
         private readonly Themes _themes;
         private readonly Console _console;
         private readonly Display _display;
+        private readonly Connections _connections;
 
         public Context(IJSRuntime js)
         {
@@ -15,6 +17,7 @@ namespace Application.Source.Core
             _themes = new(js);
             _console = new(js);
             _display = new(js);
+            _connections = new();
             Initialize();
         }
 

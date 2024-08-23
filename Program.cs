@@ -16,6 +16,5 @@ var context = host.Services.GetRequiredService<Context>();
 context.Themes.Add(new("dark", ThemeType.DARK, "black", "wite"));
 context.Themes.Add(new("light", ThemeType.LIGHT, "wite", "black"));
 context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"));
-//context.Initialize();
 
 await host.RunAsync();
