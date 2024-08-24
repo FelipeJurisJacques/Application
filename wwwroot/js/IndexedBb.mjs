@@ -8,14 +8,23 @@ export class IndexedBb {
 
     #dotNetObject
 
-    static open(dotNetObject, name, version) {
-        const instance = new IndexedBD(dotNetObject)
-        instance.#connection = window.indexedDB.open(name, version)
+    static open(dotNetObject, name, version = null) {
+        const instance = new IndexedBb(dotNetObject)
+        if (version) {
+            instance.#connection = window.indexedDB.open(name, version)
+        } else {
+            instance.#connection = window.indexedDB.open(name, version)
+        }
+        instance.#connection.onerror = event => {
+            event.target.error.message
+        }
+        instance.#connection.onsuccess = event => {
+        }
         return instance
     }
 
     constructor(dotNetObject) {
         this.#dotNetObject = dotNetObject
-        IndexedBD.#connections.push(this)
+        IndexedBb.#connections.push(this)
     }
 }

@@ -5,5 +5,7 @@ namespace Application.Source.Core.Storage.IndexedDb
         private readonly string _name = name;
 
         public string Name => _name;
+
+        public void Add() { }
     }
 }

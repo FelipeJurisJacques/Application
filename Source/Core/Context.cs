@@ -17,7 +17,7 @@ namespace Application.Source.Core
             _themes = new(js);
             _console = new(js);
             _display = new(js);
-            _connections = new();
+            _connections = new(js);
             Initialize();
         }
 
@@ -27,10 +27,12 @@ namespace Application.Source.Core
 
         public Display Display => _display;
 
+        public Connections IndexedDb => _connections;
+
         public async void Initialize()
         {
             await _js.InvokeVoidAsync(
-                "eventsInterop.initialize",
+                "interop.initialize",
                 DotNetObjectReference.Create(this)
             );
             Themes.Initialize();

@@ -1,4 +1,4 @@
-import { IndexedBD } from "./IndexedBb.mjs"
+import { IndexedBb } from "./IndexedBb.mjs"
 
 class Main {
     #indexedDb
@@ -23,4 +23,4 @@ class Main {
     }
 }
 
-window.eventsInterop = new Main()
+window.interop = new Main()
