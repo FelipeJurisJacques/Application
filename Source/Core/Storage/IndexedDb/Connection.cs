@@ -80,7 +80,7 @@ namespace Application.Source.Core.Storage.IndexedDb
             if (_upgrade == null)
             {
                 await _js.InvokeVoidAsync(
-                    "interop.indexDb.open",
+                    "interop.indexedDb.open",
                     DotNetObjectReference.Create(this),
                     tcs,
                     _name
@@ -89,10 +89,11 @@ namespace Application.Source.Core.Storage.IndexedDb
             else
             {
                 await _js.InvokeVoidAsync(
-                    "interop.indexDb.open",
+                    "interop.indexedDb.upgrade",
                     DotNetObjectReference.Create(this),
                     tcs,
-                    _name
+                    _name,
+                    _upgrade.Version
                 );
             }
             await tcs.Task;

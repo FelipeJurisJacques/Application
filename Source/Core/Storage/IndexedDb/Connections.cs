@@ -16,7 +16,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     return conn;
                 }
             }
-            var connection = new Connection(name);
+            var connection = new Connection(_js, name);
             _connections.Add(connection);
             return connection;
         }
@@ -32,7 +32,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     );
                 }
             }
-            var connection = new Connection(name, upgrade);
+            var connection = new Connection(_js, name, upgrade);
             _connections.Add(connection);
             return connection;
         }

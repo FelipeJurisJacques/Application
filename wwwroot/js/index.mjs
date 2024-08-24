@@ -1,15 +1,15 @@
-import { IndexedBb } from "./IndexedBb.mjs"
+import { IndexedDb } from "./IndexedDb.mjs"
 
 class Main {
     #indexedDb
     #dotNetObject
 
     constructor() {
-        this.#indexedDb = IndexedBb
+        this.#indexedDb = IndexedDb
         this.#dotNetObject = null
     }
 
-    get indexedBb() {
+    get indexedDb() {
         return this.#indexedDb
     }
 
