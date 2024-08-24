@@ -9,7 +9,7 @@ class Main {
         this.#dotNetObject = null
     }
 
-    get indexedBD() {
+    get indexedBb() {
         return this.#indexedDb
     }
 

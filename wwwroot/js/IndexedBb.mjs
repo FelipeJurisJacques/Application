@@ -8,7 +8,7 @@ export class IndexedBb {
 
     #dotNetObject
 
-    static open(dotNetObject, name, version = null) {
+    static open(dotNetObject, tcs, name, version = null) {
         const instance = new IndexedBb(dotNetObject)
         if (version) {
             instance.#connection = window.indexedDB.open(name, version)
@@ -16,9 +16,10 @@ export class IndexedBb {
             instance.#connection = window.indexedDB.open(name, version)
         }
         instance.#connection.onerror = event => {
-            event.target.error.message
+            tcs.error(event.target.error)
         }
         instance.#connection.onsuccess = event => {
+            tcs.complete(event)
         }
         return instance
     }

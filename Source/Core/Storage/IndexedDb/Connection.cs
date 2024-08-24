@@ -76,22 +76,27 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         private async void _open()
         {
+            var tcs = new TaskCompletionSource<object>();
             if (_upgrade == null)
             {
                 await _js.InvokeVoidAsync(
-                    "interop.indexedBD.open",
+                    "interop.indexDb.open",
                     DotNetObjectReference.Create(this),
+                    tcs,
                     _name
                 );
             }
             else
             {
                 await _js.InvokeVoidAsync(
-                    "interop.indexedBD.open",
+                    "interop.indexDb.open",
                     DotNetObjectReference.Create(this),
+                    tcs,
                     _name
                 );
             }
+            await tcs.Task;
+            _opened = tcs.Task.IsCompletedSuccessfully;
         }
     }
 }
