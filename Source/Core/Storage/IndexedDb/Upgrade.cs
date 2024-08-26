@@ -1,8 +1,21 @@
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Upgrade(int version)
+    public class Upgrade
     {
-        private readonly int _version = version;
+        private readonly int _version;
+        private readonly List<Storage> _storages;
+
+        public Upgrade(int version)
+        {
+            _version = version;
+            _storages = [];
+        }
+
+        public Upgrade(int version, List<Storage> storages)
+        {
+            _version = version;
+            _storages = storages;
+        }
 
         public int Version => _version;
     }

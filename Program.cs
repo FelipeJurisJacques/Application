@@ -1,7 +1,7 @@
 using Application;
 using Application.Source.Core;
-using Application.Source.Core.Storage.IndexedDb;
 using Microsoft.AspNetCore.Components.Web;
+using Application.Source.Core.Storage.IndexedDb;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -21,7 +21,15 @@ context.Themes.Add(new("light", ThemeType.LIGHT, "wite", "black"));
 context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"));
 
 // BANCO DE DADOS
-var upgrade = new Upgrade(1);
+var upgrade = new Upgrade(1, [
+    new Storage("files", [
+        new Application.Source.Core.Storage.IndexedDb.Index(
+            "name",
+            IndexType.PRIMARY_KEY,
+            true
+        ),
+    ]),
+]);
 var connection = context.IndexedDb.Open("storage");
 await connection.Upgrade(upgrade);
 var storage = connection.GetStorage("files", true);
