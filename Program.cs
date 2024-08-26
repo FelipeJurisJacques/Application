@@ -22,7 +22,8 @@ context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"
 
 // BANCO DE DADOS
 var upgrade = new Upgrade(1);
-var connection = context.IndexedDb.Open("storage", upgrade);
+var connection = context.IndexedDb.Open("storage");
+await connection.Upgrade(upgrade);
 var storage = connection.GetStorage("files", true);
 storage.Add();
 

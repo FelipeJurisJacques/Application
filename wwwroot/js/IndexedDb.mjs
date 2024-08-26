@@ -1,33 +1,32 @@
 export class IndexedDb {
-    static #connections = []
 
     /**
      * @var IDBOpenDBRequest
      */
     #connection
 
-    #tcs
     #dotNetObject
 
-    static open(dotNetObject, tcs, name) {
-        const instance = new this(dotNetObject, tcs)
-        instance.#connection = window.indexedDB.open(name)
+    static open(dotNetObject, name, version = null, upgrade = null) {
+        const instance = new this(dotNetObject)
+        return new Promise((resolve, reject) => {
+            if (version) {
+                instance.#connection = window.indexedDB.open(name, version)
+            } else {
+                instance.#connection = window.indexedDB.open(name)
+            }
+            instance.#connection.onerror = event => {
+                console.error(event)
+                reject(event.target.error)
+            }
+            instance.#connection.onsuccess = event => {
+                console.log(event)
+                resolve(instance)
+            }
+        })
     }
 
-    static upgrade(dotNetObject, tcs, name, version) {
-        const instance = new this(dotNetObject, tcs)
-        instance.#connection = window.indexedDB.open(name, version)
-    }
-
-    constructor(dotNetObject, tcs) {
-        this.#tcs = tcs
+    constructor(dotNetObject) {
         this.#dotNetObject = dotNetObject
-        IndexedDb.#connections.push(this)
-        this.#connection.onerror = event => {
-            tcs.error(event.target.error)
-        }
-        this.#connection.onsuccess = event => {
-            tcs.complete(event)
-        }
     }
 }

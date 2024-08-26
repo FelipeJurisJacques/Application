@@ -20,21 +20,5 @@ namespace Application.Source.Core.Storage.IndexedDb
             _connections.Add(connection);
             return connection;
         }
-
-        public Connection Open(string name, Upgrade upgrade)
-        {
-            foreach (var conn in _connections)
-            {
-                if (name == conn.Name)
-                {
-                    throw new InvalidOperationException(
-                        "data base " + name + " started"
-                    );
-                }
-            }
-            var connection = new Connection(_js, name, upgrade);
-            _connections.Add(connection);
-            return connection;
-        }
     }
 }

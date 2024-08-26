@@ -1,19 +1,13 @@
 import { IndexedDb } from "./IndexedDb.mjs"
 
-class Main {
-    #indexedDb
-    #dotNetObject
+window.interop = class Main {
+    static #dotNetObject = null
 
-    constructor() {
-        this.#indexedDb = IndexedDb
-        this.#dotNetObject = null
+    static get indexedDb() {
+        return IndexedDb
     }
 
-    get indexedDb() {
-        return this.#indexedDb
-    }
-
-    initialize(dotNetObject) {
+    static initialize(dotNetObject) {
         if (!this.#dotNetObject) {
             this.#dotNetObject = dotNetObject
             window.addEventListener('resize', event => {
@@ -22,5 +16,3 @@ class Main {
         }
     }
 }
-
-window.interop = new Main()

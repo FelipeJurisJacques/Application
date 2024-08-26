@@ -14,28 +14,6 @@ namespace Application.Source.Core
         public string PrimaryColor => _primaryColor;
 
         public string SecondaryColor => _secondaryColor;
-
-        // public ThemeType Current
-        // {
-        //     get { return _theme; }
-        //     set
-        //     {
-        //         _theme = value;
-        //         switch (value)
-        //         {
-        //             case ThemeType.LIGHT:
-        //                 _js.InvokeVoidAsync("localStorage.setItem", "theme", "light");
-        //                 break;
-        //             case ThemeType.HIGH_CONTRAST:
-        //                 _js.InvokeVoidAsync("localStorage.setItem", "theme", "high_contrast");
-        //                 break;
-        //             case ThemeType.DARK:
-        //             default:
-        //                 _js.InvokeVoidAsync("localStorage.setItem", "theme", "dark");
-        //                 break;
-        //         }
-        //     }
-        // }
     }
 
     public enum ThemeType

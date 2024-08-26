@@ -2,39 +2,37 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Connection
+    public class Connection(IJSRuntime js, string name)
     {
-        private bool _opened;
-        private Upgrade? _upgrade;
-        private readonly string _name;
-        private readonly IJSRuntime _js;
-        private readonly List<Transaction> _transactions;
-
-        public Connection(IJSRuntime js, string name)
-        {
-            _js = js;
-            _name = name;
-            _opened = false;
-            _upgrade = null;
-            _transactions = [];
-            _open();
-        }
-
-        public Connection(IJSRuntime js, string name, Upgrade upgrade)
-        {
-            _js = js;
-            _name = name;
-            _opened = false;
-            _upgrade = upgrade;
-            _transactions = [];
-            _open();
-        }
+        private bool _opened = false;
+        private bool _opening = false;
+        private Upgrade? _upgrade = null;
+        private readonly string _name = name;
+        private readonly IJSRuntime _js = js;
+        private IJSObjectReference? _connection = null;
+        private readonly List<Transaction> _transactions = [];
 
         public string Name => _name;
 
         public bool Opened => _opened;
 
         public bool Closed => !_opened;
+
+        public async Task Upgrade(Upgrade upgrade)
+        {
+            if (_opened || _opening)
+            {
+                throw new InvalidOperationException("data base previous opened");
+            }
+            _opening = true;
+            _upgrade = upgrade;
+            _connection = await _js.InvokeAsync<IJSObjectReference>(
+                "window.interop.indexedDb.open",
+                DotNetObjectReference.Create(this),
+                _name,
+                _upgrade.Version
+            );
+        }
 
         public Transaction Transaction(string name)
         {
@@ -74,30 +72,21 @@ namespace Application.Source.Core.Storage.IndexedDb
             return Transaction(name, write).GetStorage(name);
         }
 
-        private async void _open()
+        [JSInvokable]
+        public void OnEvent(string type)
         {
-            var tcs = new TaskCompletionSource<object>();
-            if (_upgrade == null)
+        }
+
+        private async Task _open()
+        {
+            if (!_opened)
             {
                 await _js.InvokeVoidAsync(
-                    "interop.indexedDb.open",
+                    "window.interop.indexedDb.open",
                     DotNetObjectReference.Create(this),
-                    tcs,
                     _name
                 );
             }
-            else
-            {
-                await _js.InvokeVoidAsync(
-                    "interop.indexedDb.upgrade",
-                    DotNetObjectReference.Create(this),
-                    tcs,
-                    _name,
-                    _upgrade.Version
-                );
-            }
-            await tcs.Task;
-            _opened = tcs.Task.IsCompletedSuccessfully;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Application.Source.Core
         public async void Initialize()
         {
             await _js.InvokeVoidAsync(
-                "interop.initialize",
+                "window.interop.initialize",
                 DotNetObjectReference.Create(this)
             );
             Themes.Initialize();
