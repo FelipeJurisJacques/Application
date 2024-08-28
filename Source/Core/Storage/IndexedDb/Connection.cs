@@ -35,8 +35,8 @@ namespace Application.Source.Core.Storage.IndexedDb
                         attributes.Add(new
                         {
                             name = index.Name,
-                            multi = index.MultiEntry,
                             unique = index.Unique,
+                            multiEntry = index.MultiEntry,
                         });
                     }
                 }

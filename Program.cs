@@ -21,15 +21,19 @@ context.Themes.Add(new("light", ThemeType.LIGHT, "wite", "black"));
 context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"));
 
 // BANCO DE DADOS
-var upgrade = new Upgrade(2, [
+var upgrade = new Upgrade(1, [
     new Storage("files", [
         Application.Source.Core.Storage.IndexedDb.Attribute.TypeKey("id", true),
         Application.Source.Core.Storage.IndexedDb.Attribute.TypeIndex("name"),
     ]),
 ]);
 var connection = context.IndexedDb.Open("storage");
-await connection.Upgrade(upgrade);
-var storage = connection.GetStorage("files", true);
-storage.Add();
+try {
+    await connection.Upgrade(upgrade);
+    var storage = connection.GetStorage("files", true);
+    storage.Add();
+} catch (Exception error) {
+    context.Console.Log(error.Message);
+}
 
 await host.RunAsync();
