@@ -7,11 +7,30 @@ export class IndexedDb {
 
     #dotNetObject
 
-    static open(dotNetObject, name, version = null, upgrade = null) {
+    static open(dotNetObject, name, upgrade = null) {
+        console.log(upgrade)
         const instance = new this(dotNetObject)
         return new Promise((resolve, reject) => {
-            if (version) {
-                instance.#connection = window.indexedDB.open(name, version)
+            if (upgrade && upgrade.version) {
+                instance.#connection = window.indexedDB.open(name, upgrade.version)
+                instance.#connection.onupgradeneeded = event => {
+                    const connection = event.target.result
+                    for (let store of upgrade.stores) {
+                        let storage
+                        if (connection.objectStoreNames.contains(store.name)) {
+                            console.log(connection)
+                        } else {
+                            let options = {}
+                            if (store.keyPath) {
+                                options.keyPath = store.keyPath
+                                if (store.autoIncrement) {
+                                    options.autoIncrement = store.autoIncrement
+                                }
+                            }
+                            storage = connection.createObjectStore(store.name, options)
+                        }
+                    }
+                }
             } else {
                 instance.#connection = window.indexedDB.open(name)
             }

@@ -24,13 +24,41 @@ namespace Application.Source.Core.Storage.IndexedDb
             {
                 throw new InvalidOperationException("data base previous opened");
             }
+            List<object> storages = [];
+            foreach (var storage in upgrade.Storages)
+            {
+                List<object> attributes = [];
+                foreach (var index in storage.Attributes)
+                {
+                    if (index.Indexable)
+                    {
+                        attributes.Add(new
+                        {
+                            name = index.Name,
+                            multi = index.MultiEntry,
+                            unique = index.Unique,
+                        });
+                    }
+                }
+                storages.Add(new
+                {
+                    name = storage.Name,
+                    keyPath = storage.Key == null ? "" : storage.Key.Name,
+                    autoIncrement = storage.Key != null && storage.Key.AutoIncrement,
+                    indexes = attributes,
+                });
+            }
             _opening = true;
             _upgrade = upgrade;
             _connection = await _js.InvokeAsync<IJSObjectReference>(
                 "window.interop.indexedDb.open",
                 DotNetObjectReference.Create(this),
                 _name,
-                _upgrade.Version
+                new
+                {
+                    stores = storages,
+                    version = upgrade.Version,
+                }
             );
         }
 

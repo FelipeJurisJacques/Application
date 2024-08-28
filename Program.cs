@@ -21,13 +21,10 @@ context.Themes.Add(new("light", ThemeType.LIGHT, "wite", "black"));
 context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"));
 
 // BANCO DE DADOS
-var upgrade = new Upgrade(1, [
+var upgrade = new Upgrade(2, [
     new Storage("files", [
-        new Application.Source.Core.Storage.IndexedDb.Index(
-            "name",
-            IndexType.PRIMARY_KEY,
-            true
-        ),
+        Application.Source.Core.Storage.IndexedDb.Attribute.TypeKey("id", true),
+        Application.Source.Core.Storage.IndexedDb.Attribute.TypeIndex("name"),
     ]),
 ]);
 var connection = context.IndexedDb.Open("storage");

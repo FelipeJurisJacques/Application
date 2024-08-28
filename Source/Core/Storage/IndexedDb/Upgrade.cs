@@ -18,5 +18,7 @@ namespace Application.Source.Core.Storage.IndexedDb
         }
 
         public int Version => _version;
+
+        public List<Storage> Storages => _storages;
     }
 }
