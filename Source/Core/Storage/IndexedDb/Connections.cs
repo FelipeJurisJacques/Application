@@ -7,7 +7,7 @@ namespace Application.Source.Core.Storage.IndexedDb
         private readonly IJSRuntime _js = js;
         private readonly List<Connection> _connections = [];
 
-        public Connection Open(string name)
+        public Connection GetConnection(string name)
         {
             foreach (var conn in _connections)
             {
@@ -16,7 +16,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     return conn;
                 }
             }
-            var connection = new Connection(_js, name);
+            var connection = new Connection(this, _js, name);
             _connections.Add(connection);
             return connection;
         }

@@ -2,7 +2,7 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Connection(IJSRuntime js, string name)
+    public class Connection( Connections connections, IJSRuntime js, string name)
     {
         private bool _opened = false;
         private bool _opening = false;
@@ -11,6 +11,7 @@ namespace Application.Source.Core.Storage.IndexedDb
         private readonly IJSRuntime _js = js;
         private IJSObjectReference? _connection = null;
         private readonly List<Transaction> _transactions = [];
+        private readonly Connections _connections = connections;
 
         public string Name => _name;
 
@@ -18,12 +19,31 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public bool Closed => !_opened;
 
+        public Connections Connections => _connections;
+
+        public async Task Open()
+        {
+            if (!_opened)
+            {
+                _opening = true;
+                _connection = await _js.InvokeAsync<IJSObjectReference>(
+                    "window.interop.indexedDb.open",
+                    DotNetObjectReference.Create(this),
+                    _name
+                );
+                _opened = true;
+                _opening = false;
+            }
+        }
+
         public async Task Upgrade(Upgrade upgrade)
         {
             if (_opened || _opening)
             {
                 throw new InvalidOperationException("data base previous opened");
             }
+            _opening = true;
+            _upgrade = upgrade;
             List<object> storages = [];
             foreach (var storage in upgrade.Storages)
             {
@@ -48,8 +68,6 @@ namespace Application.Source.Core.Storage.IndexedDb
                     indexes = attributes,
                 });
             }
-            _opening = true;
-            _upgrade = upgrade;
             _connection = await _js.InvokeAsync<IJSObjectReference>(
                 "window.interop.indexedDb.open",
                 DotNetObjectReference.Create(this),
@@ -60,6 +78,8 @@ namespace Application.Source.Core.Storage.IndexedDb
                     version = upgrade.Version,
                 }
             );
+            _opened = true;
+            _opening = false;
         }
 
         public Transaction Transaction(string name)
@@ -90,31 +110,9 @@ namespace Application.Source.Core.Storage.IndexedDb
             return transaction;
         }
 
-        public Storage GetStorage(string name)
-        {
-            return Transaction(name).GetStorage(name);
-        }
-
-        public Storage GetStorage(string name, bool write)
-        {
-            return Transaction(name, write).GetStorage(name);
-        }
-
         [JSInvokable]
         public void OnEvent(string type)
         {
-        }
-
-        private async Task _open()
-        {
-            if (!_opened)
-            {
-                await _js.InvokeVoidAsync(
-                    "window.interop.indexedDb.open",
-                    DotNetObjectReference.Create(this),
-                    _name
-                );
-            }
         }
     }
 }

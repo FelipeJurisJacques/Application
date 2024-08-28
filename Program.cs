@@ -27,7 +27,7 @@ var upgrade = new Upgrade(1, [
         Application.Source.Core.Storage.IndexedDb.Attribute.TypeIndex("name"),
     ]),
 ]);
-var connection = context.IndexedDb.Open("storage");
+var connection = context.IndexedDb.GetConnection("storage");
 try {
     await connection.Upgrade(upgrade);
     var storage = connection.GetStorage("files", true);
