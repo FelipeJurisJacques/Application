@@ -84,28 +84,22 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public Transaction Transaction(string name)
         {
-            var transaction = new Transaction(name);
-            _transactions.Add(transaction);
-            return transaction;
+            return Transaction(name, false);
         }
 
         public Transaction Transaction(string name, bool write)
         {
-            var transaction = new Transaction(name, write);
-            _transactions.Add(transaction);
-            return transaction;
+            return Transaction([name], write);
         }
 
         public Transaction Transaction(List<string> names)
         {
-            var transaction = new Transaction(names);
-            _transactions.Add(transaction);
-            return transaction;
+            return Transaction(names, false);
         }
 
         public Transaction Transaction(List<string> names, bool write)
         {
-            var transaction = new Transaction(names, write);
+            var transaction = new Transaction(this, names, write);
             _transactions.Add(transaction);
             return transaction;
         }

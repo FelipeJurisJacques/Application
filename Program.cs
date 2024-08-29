@@ -30,10 +30,10 @@ var upgrade = new Upgrade(1, [
 var connection = context.IndexedDb.GetConnection("storage");
 try {
     await connection.Upgrade(upgrade);
-    var storage = connection.GetStorage("files", true);
-    storage.Add();
+    // var storage = connection.GetStorage("files", true);
+    // storage.Add();
 } catch (Exception error) {
-    context.Console.Log(error.Message);
+    context.Console.Error(error);
 }
 
 await host.RunAsync();

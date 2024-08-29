@@ -3,34 +3,14 @@ namespace Application.Source.Core.Storage.IndexedDb
     public class Transaction
     {
         private readonly bool _write;
+        private readonly Connection _connection;
         private readonly List<Storage> _storages;
 
-        public Transaction(string name)
-        {
-            _write = false;
-            _storages = [new Storage(name)];
-        }
-
-        public Transaction(string name, bool write)
-        {
-            _write = write;
-            _storages = [new Storage(name)];
-        }
-
-        public Transaction(List<string> names)
-        {
-            _write = false;
-            _storages = [];
-            foreach (var name in names)
-            {
-                _storages.Add(new Storage(name));
-            }
-        }
-
-        public Transaction(List<string> names, bool write)
+        public Transaction(Connection connection, List<string> names, bool write)
         {
             _write = write;
             _storages = [];
+            _connection = connection;
             foreach (var name in names)
             {
                 _storages.Add(new Storage(name));
