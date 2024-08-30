@@ -4,6 +4,8 @@ namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Transaction
     {
+        private bool _closed;
+        private bool _opening;
         public readonly bool Write;
         public readonly Connection Connection;
         internal IJSObjectReference? Reference;
@@ -16,6 +18,8 @@ namespace Application.Source.Core.Storage.IndexedDb
                 throw new InvalidOperationException("storage name list is empty");
             }
             Write = write;
+            _closed = false;
+            _opening = false;
             _storages = [];
             Reference = null;
             Connection = connection;
@@ -34,26 +38,30 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         internal async Task StartAsync()
         {
-            if (
-                Reference == null
-                || Connection.Opened
-                || Connection.Reference == null
-            )
+            if (!_closed && !_opening && Reference == null)
             {
-                throw new InvalidOperationException("data base not opened");
+                _opening = true;
+                await Connection.OpenAsync();
+                if (Connection.Reference == null)
+                {
+                    _closed = true;
+                }
+                else
+                {
+                    List<string> names = [];
+                    foreach (var storage in _storages)
+                    {
+                        names.Add(storage.Name);
+                    }
+                    Reference = await Connection.Reference.InvokeAsync<IJSObjectReference>(
+                        "transaction",
+                        DotNetObjectReference.Create(this),
+                        names,
+                        Write ? "readwrite" : "readonly"
+                    );
+                }
+                _opening = false;
             }
-            var mode = Write ? "readwrite" : "readonly";
-            List<string> names = [];
-            foreach (var storage in _storages)
-            {
-                names.Add(storage.Name);
-            }
-            Reference = await Connection.Reference.InvokeAsync<IJSObjectReference>(
-                "transaction",
-                DotNetObjectReference.Create(this),
-                names,
-                mode
-            );
         }
 
         public void Abort() { }

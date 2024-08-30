@@ -4,7 +4,6 @@ namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Connection
     {
-        private bool _opened;
         private bool _opening;
         internal Upgrade? _upgrade;
         public readonly string Name;
@@ -15,7 +14,6 @@ namespace Application.Source.Core.Storage.IndexedDb
         internal Connection(Connections connections, string name)
         {
             Name = name;
-            _opened = false;
             _opening = false;
             _upgrade = null;
             Reference = null;
@@ -23,9 +21,9 @@ namespace Application.Source.Core.Storage.IndexedDb
             _transactions = [];
         }
 
-        public bool Opened => _opened;
+        public bool Opened => Reference != null;
 
-        public bool Closed => !_opened;
+        public bool Closed => Reference == null;
 
         public async void Open()
         {
@@ -40,7 +38,6 @@ namespace Application.Source.Core.Storage.IndexedDb
                 DotNetObjectReference.Create(this),
                 Name
             );
-            _opened = true;
             _opening = false;
         }
 
@@ -51,7 +48,7 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public async Task UpgradeAsync(Upgrade upgrade)
         {
-            if (_opened || _opening)
+            if (_opening || Reference != null)
             {
                 throw new InvalidOperationException("data base previous opened");
             }
@@ -91,7 +88,6 @@ namespace Application.Source.Core.Storage.IndexedDb
                     version = upgrade.Version,
                 }
             );
-            _opened = true;
             _opening = false;
         }
 
