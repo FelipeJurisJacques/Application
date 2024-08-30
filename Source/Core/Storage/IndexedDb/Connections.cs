@@ -4,7 +4,7 @@ namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Connections(IJSRuntime js)
     {
-        private readonly IJSRuntime _js = js;
+        internal readonly IJSRuntime JS = js;
         private readonly List<Connection> _connections = [];
 
         public Connection GetConnection(string name)
@@ -16,7 +16,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     return conn;
                 }
             }
-            var connection = new Connection(this, _js, name);
+            var connection = new Connection(this, name);
             _connections.Add(connection);
             return connection;
         }
