@@ -97,7 +97,7 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public Transaction Transaction(string name)
         {
-            return Transaction(name, false);
+            return Transaction([name], false);
         }
 
         public Transaction Transaction(string name, bool write)
@@ -114,28 +114,30 @@ namespace Application.Source.Core.Storage.IndexedDb
         {
             var transaction = new Transaction(this, names, write);
             _transactions.Add(transaction);
-            _transaction(transaction);
+            transaction.Start();
             return transaction;
         }
-
-        private async void _transaction(Transaction transaction)
+        public async Task<Transaction> TransactionAsync(string name)
         {
-            if (!_opened || Reference == null)
-            {
-                throw new InvalidOperationException("data base not opened");
-            }
-            var mode = Handle.Transaction.Writable ? "readwrite" : "readonly";
-            List<string> names = [];
-            foreach (var storage in Handle.Transaction.Storages)
-            {
-                names.Add(storage.Name);
-            }
-            Handle.Reference = await Reference.InvokeAsync<IJSObjectReference>(
-                "transaction",
-                DotNetObjectReference.Create(Handle),
-                names,
-                mode
-            );
+            return await TransactionAsync([name], false);
+        }
+
+        public async Task<Transaction> TransactionAsync(string name, bool write)
+        {
+            return await TransactionAsync([name], write);
+        }
+
+        public async Task<Transaction> TransactionAsync(List<string> names)
+        {
+            return await TransactionAsync(names, false);
+        }
+
+        public async Task<Transaction> TransactionAsync(List<string> names, bool write)
+        {
+            var transaction = new Transaction(this, names, write);
+            _transactions.Add(transaction);
+            await transaction.StartAsync();
+            return transaction;
         }
 
         [JSInvokable]

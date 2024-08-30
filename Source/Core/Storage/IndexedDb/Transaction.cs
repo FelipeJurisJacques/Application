@@ -4,31 +4,57 @@ namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Transaction
     {
-        private readonly bool _write;
-        private readonly Connection _connection;
+        public readonly bool Write;
+        public readonly Connection Connection;
+        internal IJSObjectReference? Reference;
         private readonly List<Storage> _storages;
-        protected readonly Statement Statement;
 
-        public Transaction(Connection connection, List<string> names, bool write)
+        internal Transaction(Connection connection, List<string> names, bool write)
         {
-            if (names.Count == 0) {
+            if (names.Count == 0)
+            {
                 throw new InvalidOperationException("storage name list is empty");
             }
-            _write = write;
+            Write = write;
             _storages = [];
-            _connection = connection;
-            Statement = new Transaction.Statement(this, connection.Handler);
+            Reference = null;
+            Connection = connection;
             foreach (var name in names)
             {
                 _storages.Add(new Storage(name));
             }
         }
 
-        public bool Writable => _write;
-
         public List<Storage> Storages => _storages;
 
-        public Connection Connection => _connection;
+        internal async void Start()
+        {
+            await StartAsync();
+        }
+
+        internal async Task StartAsync()
+        {
+            if (
+                Reference == null
+                || Connection.Opened
+                || Connection.Reference == null
+            )
+            {
+                throw new InvalidOperationException("data base not opened");
+            }
+            var mode = Write ? "readwrite" : "readonly";
+            List<string> names = [];
+            foreach (var storage in _storages)
+            {
+                names.Add(storage.Name);
+            }
+            Reference = await Connection.Reference.InvokeAsync<IJSObjectReference>(
+                "transaction",
+                DotNetObjectReference.Create(this),
+                names,
+                mode
+            );
+        }
 
         public void Abort() { }
 
@@ -46,12 +72,6 @@ namespace Application.Source.Core.Storage.IndexedDb
             throw new ArgumentOutOfRangeException(
                 "undefined storage " + name
             );
-        }
-
-        public class Handle(Transaction transaction, Connection.Handle handler) {
-            public Transaction Transaction = transaction;
-            public IJSObjectReference? Reference = null;
-            public readonly Connection.Handle Connection = handler;
         }
     }
 }
