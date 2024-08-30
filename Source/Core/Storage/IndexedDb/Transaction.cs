@@ -8,6 +8,9 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public Transaction(Connection connection, List<string> names, bool write)
         {
+            if (names.Count == 0) {
+                throw new InvalidOperationException("storage name list is empty");
+            }
             _write = write;
             _storages = [];
             _connection = connection;
@@ -18,6 +21,8 @@ namespace Application.Source.Core.Storage.IndexedDb
         }
 
         public List<Storage> Storages => _storages;
+
+        public Connection Connection => _connection;
 
         public void Abort() { }
 
