@@ -2,84 +2,38 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Connection( Connections connections, IJSRuntime js, string name)
+    public class Connection
     {
-        private bool _opened = false;
-        private bool _opening = false;
-        private Upgrade? _upgrade = null;
-        private readonly string _name = name;
-        private readonly IJSRuntime _js = js;
-        private IJSObjectReference? _connection = null;
-        private readonly List<Transaction> _transactions = [];
-        private readonly Connections _connections = connections;
+        private Upgrade? _upgrade;
+        private readonly string _name;
+        internal readonly Handle Handler;
+        public readonly Connections Connections;
+        private readonly List<Transaction> _transactions;
+
+        public Connection(Connections connections, IJSRuntime js, string name)
+        {
+            _name = name;
+            _upgrade = null;
+            Handler = new Handle(this, js);
+            Connections = connections;
+            _transactions = [];
+        }
 
         public string Name => _name;
 
-        public bool Opened => _opened;
+        public bool Opened => Handler.Opened;
 
-        public bool Closed => !_opened;
+        public bool Closed => !Handler.Opened;
 
-        public Connections Connections => _connections;
-
-        public async Task Open()
+        public async void Open()
         {
-            if (!_opened)
-            {
-                _opening = true;
-                _connection = await _js.InvokeAsync<IJSObjectReference>(
-                    "window.interop.indexedDb.open",
-                    DotNetObjectReference.Create(this),
-                    _name
-                );
-                _opened = true;
-                _opening = false;
-            }
+            await Handler.Open(_name);
         }
 
-        public async Task Upgrade(Upgrade upgrade)
+        public async void Upgrade(Upgrade upgrade)
         {
-            if (_opened || _opening)
-            {
-                throw new InvalidOperationException("data base previous opened");
-            }
-            _opening = true;
             _upgrade = upgrade;
-            List<object> storages = [];
-            foreach (var storage in upgrade.Storages)
-            {
-                List<object> attributes = [];
-                foreach (var index in storage.Attributes)
-                {
-                    if (index.Indexable)
-                    {
-                        attributes.Add(new
-                        {
-                            name = index.Name,
-                            unique = index.Unique,
-                            multiEntry = index.MultiEntry,
-                        });
-                    }
-                }
-                storages.Add(new
-                {
-                    name = storage.Name,
-                    keyPath = storage.Key == null ? "" : storage.Key.Name,
-                    autoIncrement = storage.Key != null && storage.Key.AutoIncrement,
-                    indexes = attributes,
-                });
-            }
-            _connection = await _js.InvokeAsync<IJSObjectReference>(
-                "window.interop.indexedDb.open",
-                DotNetObjectReference.Create(this),
-                _name,
-                new
-                {
-                    stores = storages,
-                    version = upgrade.Version,
-                }
-            );
-            _opened = true;
-            _opening = false;
+            await Handler.Upgrade(_name, upgrade);
         }
 
         public Transaction Transaction(string name)
@@ -101,12 +55,106 @@ namespace Application.Source.Core.Storage.IndexedDb
         {
             var transaction = new Transaction(this, names, write);
             _transactions.Add(transaction);
+            _transaction(transaction);
             return transaction;
         }
 
-        [JSInvokable]
-        public void OnEvent(string type)
+        private async void _transaction(Transaction transaction)
         {
+            await Handler.Transaction(transaction.Handler);
+        }
+
+        public class Handle(Connection connection, IJSRuntime js)
+        {
+            private bool _opened = false;
+            private bool _opening = false;
+            private readonly IJSRuntime _js = js;
+            public IJSObjectReference? Reference = null;
+            public readonly Connection Connection = connection;
+
+            public bool Opened => _opened;
+
+            public async Task Open(string name)
+            {
+                _opening = true;
+                Reference = await _js.InvokeAsync<IJSObjectReference>(
+                    "window.interop.indexedDb.open",
+                    DotNetObjectReference.Create(this),
+                    name
+                );
+                _opened = true;
+                _opening = false;
+            }
+
+            public async Task Upgrade(string name, Upgrade upgrade)
+            {
+                if (_opened || _opening)
+                {
+                    throw new InvalidOperationException("data base previous opened");
+                }
+                _opening = true;
+                List<object> storages = [];
+                foreach (var storage in upgrade.Storages)
+                {
+                    List<object> attributes = [];
+                    foreach (var index in storage.Attributes)
+                    {
+                        if (index.Indexable)
+                        {
+                            attributes.Add(new
+                            {
+                                name = index.Name,
+                                unique = index.Unique,
+                                multiEntry = index.MultiEntry,
+                            });
+                        }
+                    }
+                    storages.Add(new
+                    {
+                        name = storage.Name,
+                        keyPath = storage.Key == null ? "" : storage.Key.Name,
+                        autoIncrement = storage.Key != null && storage.Key.AutoIncrement,
+                        indexes = attributes,
+                    });
+                }
+                Reference = await _js.InvokeAsync<IJSObjectReference>(
+                    "window.interop.indexedDb.open",
+                    DotNetObjectReference.Create(this),
+                    name,
+                    new
+                    {
+                        stores = storages,
+                        version = upgrade.Version,
+                    }
+                );
+                _opened = true;
+                _opening = false;
+            }
+
+            public async Task Transaction(Transaction.Handle Handle)
+            {
+                if (!_opened || Reference == null)
+                {
+                    throw new InvalidOperationException("data base not opened");
+                }
+                var mode = Handle.Transaction.Writable ? "readwrite" : "readonly";
+                List<string> names = [];
+                foreach (var storage in Handle.Transaction.Storages)
+                {
+                    names.Add(storage.Name);
+                }
+                Handle.Reference = await Reference.InvokeAsync<IJSObjectReference>(
+                    "transaction",
+                    DotNetObjectReference.Create(Handle),
+                    names,
+                    mode
+                );
+            }
+
+            [JSInvokable]
+            public void OnEvent(string type)
+            {
+            }
         }
     }
 }
