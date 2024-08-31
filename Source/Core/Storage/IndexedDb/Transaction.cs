@@ -64,9 +64,13 @@ namespace Application.Source.Core.Storage.IndexedDb
             }
         }
 
-        public void Abort() { }
+        public void Abort() {
+            _closed = true;
+        }
 
-        public void Commit() { }
+        public void Commit() {
+            _closed = true;
+        }
 
         public Storage GetStorage(string name)
         {

@@ -4,26 +4,25 @@ namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Connection
     {
-        private bool _opening;
         internal Upgrade? _upgrade;
         public readonly string Name;
-        public IJSObjectReference? Reference;
         public readonly Connections Connections;
         internal readonly List<Transaction> _transactions;
+        private TaskCompletionSource<IJSObjectReference>? _tcs;
 
         internal Connection(Connections connections, string name)
         {
             Name = name;
-            _opening = false;
+            _tcs = null;
             _upgrade = null;
-            Reference = null;
             Connections = connections;
             _transactions = [];
         }
 
-        public bool Opened => Reference != null;
-
-        public bool Closed => Reference == null;
+        public async Task<IJSObjectReference?> GetReferenceAsync()
+        {
+            return _tcs == null ? null : await _tcs.Task;
+        }
 
         public async void Open()
         {
@@ -32,13 +31,19 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public async Task OpenAsync()
         {
-            _opening = true;
-            Reference = await Connections.JS.InvokeAsync<IJSObjectReference>(
-                "window.interop.indexedDb.open",
-                DotNetObjectReference.Create(this),
-                Name
-            );
-            _opening = false;
+            if (_tcs == null)
+            {
+                _tcs = new();
+                _tcs.TrySetResult(await Connections.JS.InvokeAsync<IJSObjectReference>(
+                    "window.interop.indexedDb.open",
+                    DotNetObjectReference.Create(this),
+                    Name
+                ));
+            }
+            else
+            {
+                await _tcs.Task;
+            }
         }
 
         public async void Upgrade(Upgrade upgrade)
@@ -48,12 +53,12 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public async Task UpgradeAsync(Upgrade upgrade)
         {
-            if (_opening || Reference != null)
+            if (_tcs != null)
             {
                 throw new InvalidOperationException("data base previous opened");
             }
             _upgrade = upgrade;
-            _opening = true;
+            _tcs = new();
             List<object> storages = [];
             foreach (var storage in upgrade.Storages)
             {
@@ -78,7 +83,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     indexes = attributes,
                 });
             }
-            Reference = await Connections.JS.InvokeAsync<IJSObjectReference>(
+            _tcs.TrySetResult(await Connections.JS.InvokeAsync<IJSObjectReference>(
                 "window.interop.indexedDb.open",
                 DotNetObjectReference.Create(this),
                 Name,
@@ -87,8 +92,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     stores = storages,
                     version = upgrade.Version,
                 }
-            );
-            _opening = false;
+            ));
         }
 
         public Transaction Transaction(string name)
@@ -113,6 +117,7 @@ namespace Application.Source.Core.Storage.IndexedDb
             transaction.Start();
             return transaction;
         }
+
         public async Task<Transaction> TransactionAsync(string name)
         {
             return await TransactionAsync([name], false);
