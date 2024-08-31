@@ -42,7 +42,8 @@ namespace Application.Source.Core.Storage.IndexedDb
             {
                 _opening = true;
                 await Connection.OpenAsync();
-                if (Connection.Reference == null)
+                var reference = await Connection.GetReferenceAsync();
+                if (reference == null)
                 {
                     _closed = true;
                 }
@@ -53,7 +54,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     {
                         names.Add(storage.Name);
                     }
-                    Reference = await Connection.Reference.InvokeAsync<IJSObjectReference>(
+                    Reference = await reference.InvokeAsync<IJSObjectReference>(
                         "transaction",
                         DotNetObjectReference.Create(this),
                         names,
