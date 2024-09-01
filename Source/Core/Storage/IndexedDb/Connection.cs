@@ -34,11 +34,18 @@ namespace Application.Source.Core.Storage.IndexedDb
             if (_tcs == null)
             {
                 _tcs = new();
-                _tcs.TrySetResult(await Connections.JS.InvokeAsync<IJSObjectReference>(
-                    "window.interop.indexedDb.open",
-                    DotNetObjectReference.Create(this),
-                    Name
-                ));
+                try
+                {
+                    _tcs.SetResult(await Connections.JS.InvokeAsync<IJSObjectReference>(
+                        "window.interop.indexedDb.open",
+                        DotNetObjectReference.Create(this),
+                        Name
+                    ));
+                }
+                catch (Exception error)
+                {
+                    _tcs.SetException(error);
+                }
             }
             else
             {
@@ -83,16 +90,23 @@ namespace Application.Source.Core.Storage.IndexedDb
                     indexes = attributes,
                 });
             }
-            _tcs.TrySetResult(await Connections.JS.InvokeAsync<IJSObjectReference>(
-                "window.interop.indexedDb.open",
-                DotNetObjectReference.Create(this),
-                Name,
-                new
-                {
-                    stores = storages,
-                    version = upgrade.Version,
-                }
-            ));
+            try
+            {
+                _tcs.SetResult(await Connections.JS.InvokeAsync<IJSObjectReference>(
+                    "window.interop.indexedDb.open",
+                    DotNetObjectReference.Create(this),
+                    Name,
+                    new
+                    {
+                        stores = storages,
+                        version = upgrade.Version,
+                    }
+                ));
+            }
+            catch (Exception error)
+            {
+                _tcs.SetException(error);
+            }
         }
 
         public Transaction Transaction(string name)
