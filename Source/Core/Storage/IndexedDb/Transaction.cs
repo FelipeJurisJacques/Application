@@ -5,11 +5,11 @@ namespace Application.Source.Core.Storage.IndexedDb
     public class Transaction
     {
         private bool _closed;
-        private bool _opening;
         public readonly bool Write;
         public readonly Connection Connection;
         internal IJSObjectReference? Reference;
         private readonly List<Storage> _storages;
+        private TaskCompletionSource<IJSObjectReference>? _tcs;
 
         internal Transaction(Connection connection, List<string> names, bool write)
         {
@@ -17,9 +17,9 @@ namespace Application.Source.Core.Storage.IndexedDb
             {
                 throw new InvalidOperationException("storage name list is empty");
             }
+            _tcs = null;
             Write = write;
             _closed = false;
-            _opening = false;
             _storages = [];
             Reference = null;
             Connection = connection;
@@ -38,38 +38,52 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         internal async Task StartAsync()
         {
-            if (!_closed && !_opening && Reference == null)
+            if (_tcs == null)
             {
-                _opening = true;
-                await Connection.OpenAsync();
-                var reference = await Connection.GetReferenceAsync();
-                if (reference == null)
+                _tcs = new();
+                try
+                {
+                    await Connection.OpenAsync();
+                    var reference = await Connection.GetReferenceAsync();
+                    if (reference == null)
+                    {
+                        _closed = true;
+                        _tcs.SetCanceled();
+                    }
+                    else
+                    {
+                        List<string> names = [];
+                        foreach (var storage in _storages)
+                        {
+                            names.Add(storage.Name);
+                        }
+                        _tcs.SetResult(await reference.InvokeAsync<IJSObjectReference>(
+                            "transaction",
+                            DotNetObjectReference.Create(this),
+                            names,
+                            Write ? "readwrite" : "readonly"
+                        ));
+                    }
+                }
+                catch (Exception error)
                 {
                     _closed = true;
+                    _tcs.SetException(error);
                 }
-                else
-                {
-                    List<string> names = [];
-                    foreach (var storage in _storages)
-                    {
-                        names.Add(storage.Name);
-                    }
-                    Reference = await reference.InvokeAsync<IJSObjectReference>(
-                        "transaction",
-                        DotNetObjectReference.Create(this),
-                        names,
-                        Write ? "readwrite" : "readonly"
-                    );
-                }
-                _opening = false;
+            }
+            else
+            {
+                await _tcs.Task;
             }
         }
 
-        public void Abort() {
+        public void Abort()
+        {
             _closed = true;
         }
 
-        public void Commit() {
+        public void Commit()
+        {
             _closed = true;
         }
 
@@ -85,6 +99,11 @@ namespace Application.Source.Core.Storage.IndexedDb
             throw new ArgumentOutOfRangeException(
                 "undefined storage " + name
             );
+        }
+
+        internal async Task<IJSObjectReference?> GetReferenceAsync()
+        {
+            return _tcs == null ? null : await _tcs.Task;
         }
     }
 }

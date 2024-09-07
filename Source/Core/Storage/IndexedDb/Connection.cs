@@ -19,11 +19,6 @@ namespace Application.Source.Core.Storage.IndexedDb
             _transactions = [];
         }
 
-        public async Task<IJSObjectReference?> GetReferenceAsync()
-        {
-            return _tcs == null ? null : await _tcs.Task;
-        }
-
         public async void Open()
         {
             await OpenAsync();
@@ -153,6 +148,11 @@ namespace Application.Source.Core.Storage.IndexedDb
             _transactions.Add(transaction);
             await transaction.StartAsync();
             return transaction;
+        }
+
+        internal async Task<IJSObjectReference?> GetReferenceAsync()
+        {
+            return _tcs == null ? null : await _tcs.Task;
         }
 
         [JSInvokable]
