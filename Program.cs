@@ -1,5 +1,6 @@
 using Application;
 using Application.Source.Core;
+using Application.Source.Core.Storage;
 using Microsoft.AspNetCore.Components.Web;
 using Application.Source.Core.Storage.IndexedDb;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -23,8 +24,13 @@ context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"
 // BANCO DE DADOS
 var upgrade = new Upgrade(1, [
     new Storage("files", [
-        Field.TypeKey("id", true),
-        Field.TypeIndex("name"),
+        new Field("id", [
+            FieldProperty.KEY,
+            FieldProperty.DEFAULT_VALUE_AUTO_INCREMENT,
+        ]),
+        new Field("name", [
+            FieldProperty.INDEXABLE,
+        ]),
     ]),
 ]);
 var connection = context.IndexedDb.GetConnection("storage");

@@ -1,7 +1,6 @@
 using Microsoft.JSInterop;
-using Application.Source.Core.Storage.IndexedDb;
 
-namespace Application.Source.Core.Storage
+namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Connections(IJSRuntime js)
     {
