@@ -48,7 +48,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                 try
                 {
                     await Connection.OpenAsync();
-                    var reference = await Connection.GetReferenceAsync();
+                    var reference = await _connection.GetReferenceAsync();
                     if (reference == null)
                     {
                         _closed = true;

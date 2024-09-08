@@ -3,31 +3,31 @@ namespace Application.Source.Core.Storage.IndexedDb
     public class Storage : IStorage
     {
         public readonly string _name;
-        private readonly Attribute? _key;
+        private readonly Field? _key;
+        private readonly List<IField> _fields;
         private readonly Transaction? _transaction;
-        private readonly List<Attribute> _attributes;
 
         public Storage(string name)
         {
             _key = null;
             _name = name;
-            _attributes = [];
+            _fields = [];
             _transaction = null;
         }
 
-        public Storage(string name, List<Attribute> indexes)
+        public Storage(string name, List<Field> fields)
         {
             _key = null;
             _name = name;
-            _attributes = [];
+            _fields = [];
             _transaction = null;
-            foreach (var attribute in indexes)
+            foreach (var field in fields)
             {
-                if (attribute.Key)
+                if (field.Key)
                 {
                     if (_key == null)
                     {
-                        _key = attribute;
+                        _key = field;
                     }
                     else
                     {
@@ -38,7 +38,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                 }
                 else
                 {
-                    _attributes.Add(attribute);
+                    _fields.Add(field);
                 }
             }
         }
@@ -46,15 +46,15 @@ namespace Application.Source.Core.Storage.IndexedDb
         internal Storage(Transaction transaction, string name)
         {
             _name = name;
-            _attributes = [];
+            _fields = [];
             _transaction = transaction;
         }
 
         public string Name => _name;
 
-        public Attribute? Key => _key;
+        public Field? Key => _key;
 
-        public List<Attribute> Attributes => _attributes;
+        public List<IField> Fields => _fields;
 
         public void Add() { }
     }

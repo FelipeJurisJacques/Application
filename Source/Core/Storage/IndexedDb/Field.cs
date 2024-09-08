@@ -1,30 +1,30 @@
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public record class Attribute
+    public record class Field : IField
     {
-        public readonly string Name;
         public readonly bool Key;
         public readonly bool Unique;
+        private readonly string _name;
         public readonly bool Indexable;
         public readonly bool MultiEntry;
         public readonly bool AutoIncrement;
 
-        public static Attribute TypeKey(string name, bool autoIncrement)
+        public static Field TypeKey(string name, bool autoIncrement)
         {
-            return new Attribute(name, true, true, true, false, autoIncrement);
+            return new Field(name, true, true, true, false, autoIncrement);
         }
 
-        public static Attribute TypeIndex(string name)
+        public static Field TypeIndex(string name)
         {
-            return new Attribute(name, false, false, true, false, false);
+            return new Field(name, false, false, true, false, false);
         }
 
-        public static Attribute TypeUnique(string name)
+        public static Field TypeUnique(string name)
         {
-            return new Attribute(name, false, true, true, false, false);
+            return new Field(name, false, true, true, false, false);
         }
 
-        private Attribute(
+        private Field(
             string name,
             bool key,
             bool unique,
@@ -33,12 +33,14 @@ namespace Application.Source.Core.Storage.IndexedDb
             bool autoIncrement
         )
         {
-            Name = name;
+            _name = name;
             Key = key;
             Unique = unique;
             Indexable = indexable;
             MultiEntry = multiEntry;
             AutoIncrement = autoIncrement;
         }
+
+        public string Name => _name;
     }
 }

@@ -1,8 +1,7 @@
 namespace Application.Source.Core.Storage
 {
-    public interface IStorage
+    public interface IField
     {
         string Name { get; }
-        List<IField> Fields { get; }
     }
 }
