@@ -1,8 +1,8 @@
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Storage
+    public class Storage : IStorage
     {
-        public readonly string Name;
+        public readonly string _name;
         private readonly Attribute? _key;
         private readonly Transaction? _transaction;
         private readonly List<Attribute> _attributes;
@@ -10,7 +10,7 @@ namespace Application.Source.Core.Storage.IndexedDb
         public Storage(string name)
         {
             _key = null;
-            Name = name;
+            _name = name;
             _attributes = [];
             _transaction = null;
         }
@@ -18,7 +18,7 @@ namespace Application.Source.Core.Storage.IndexedDb
         public Storage(string name, List<Attribute> indexes)
         {
             _key = null;
-            Name = name;
+            _name = name;
             _attributes = [];
             _transaction = null;
             foreach (var attribute in indexes)
@@ -32,7 +32,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     else
                     {
                         throw new InvalidOperationException(
-                            "primary key is duplicated in storage " + Name
+                            "primary key is duplicated in storage " + _name
                         );
                     }
                 }
@@ -45,9 +45,12 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         internal Storage(Transaction transaction, string name)
         {
-            Name = name;
+            _name = name;
+            _attributes = [];
             _transaction = transaction;
         }
+
+        public string Name => _name;
 
         public Attribute? Key => _key;
 

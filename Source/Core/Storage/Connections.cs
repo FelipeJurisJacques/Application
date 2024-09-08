@@ -1,4 +1,5 @@
 using Microsoft.JSInterop;
+using Application.Source.Core.Storage.IndexedDb;
 
 namespace Application.Source.Core.Storage
 {
@@ -16,7 +17,7 @@ namespace Application.Source.Core.Storage
                     return conn;
                 }
             }
-            var connection = new IConnection(this, name);
+            var connection = new Connection(this, name);
             _connections.Add(connection);
             return connection;
         }

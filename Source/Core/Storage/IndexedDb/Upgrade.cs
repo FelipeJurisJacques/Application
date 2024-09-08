@@ -3,7 +3,7 @@ namespace Application.Source.Core.Storage.IndexedDb
     public class Upgrade : IUpgrade
     {
         private readonly int _version;
-        private readonly List<Storage> _storages;
+        private readonly List<IStorage> _storages;
 
         public Upgrade(int version)
         {
@@ -11,7 +11,7 @@ namespace Application.Source.Core.Storage.IndexedDb
             _storages = [];
         }
 
-        public Upgrade(int version, List<Storage> storages)
+        public Upgrade(int version, List<IStorage> storages)
         {
             _version = version;
             _storages = storages;
@@ -19,6 +19,6 @@ namespace Application.Source.Core.Storage.IndexedDb
 
         public int Version => _version;
 
-        public List<Storage> Storages => _storages;
+        public List<IStorage> Storages => _storages;
     }
 }
