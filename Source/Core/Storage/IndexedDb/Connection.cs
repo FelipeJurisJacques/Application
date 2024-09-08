@@ -68,16 +68,16 @@ namespace Application.Source.Core.Storage.IndexedDb
             List<object> storages = [];
             foreach (var storage in upgrade.Storages)
             {
-                List<object> attributes = [];
+                List<object> fields = [];
                 foreach (var index in storage.Fields)
                 {
-                    if (index.Indexable)
+                    if (index.Properties.Contains(FieldProperty.INDEXABLE))
                     {
-                        attributes.Add(new
+                        fields.Add(new
                         {
                             name = index.Name,
-                            unique = index.Unique,
-                            multiEntry = index.MultiEntry,
+                            unique = index.Properties.Contains(FieldProperty.UNIQUE),
+                            multiEntry = index.Properties.Contains(FieldProperty.MULTI_ENTRY),
                         });
                     }
                 }
@@ -86,7 +86,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     name = storage.Name,
                     keyPath = storage.Key == null ? "" : storage.Key.Name,
                     autoIncrement = storage.Key != null && storage.Key.AutoIncrement,
-                    indexes = attributes,
+                    indexes = fields,
                 });
             }
             try
