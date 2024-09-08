@@ -1,5 +1,5 @@
 using Microsoft.JSInterop;
-using Application.Source.Core.Storage.IndexedDb;
+using Application.Source.Core.Storage;
 
 namespace Application.Source.Core
 {
