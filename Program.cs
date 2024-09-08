@@ -23,8 +23,8 @@ context.Themes.Add(new("high_contrast", ThemeType.HIGH_CONTRAST, "wite", "black"
 // BANCO DE DADOS
 var upgrade = new Upgrade(1, [
     new Storage("files", [
-        Application.Source.Core.Storage.IndexedDb.Attribute.TypeKey("id", true),
-        Application.Source.Core.Storage.IndexedDb.Attribute.TypeIndex("name"),
+        Field.TypeKey("id", true),
+        Field.TypeIndex("name"),
     ]),
 ]);
 var connection = context.IndexedDb.GetConnection("storage");
