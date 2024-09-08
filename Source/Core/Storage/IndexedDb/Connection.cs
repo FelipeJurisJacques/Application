@@ -69,7 +69,7 @@ namespace Application.Source.Core.Storage.IndexedDb
             foreach (var storage in upgrade.Storages)
             {
                 List<object> attributes = [];
-                foreach (var index in storage.Attributes)
+                foreach (var index in storage.Fields)
                 {
                     if (index.Indexable)
                     {

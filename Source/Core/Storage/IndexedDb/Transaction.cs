@@ -65,7 +65,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                             "transaction",
                             DotNetObjectReference.Create(this),
                             names,
-                            Write ? "readwrite" : "readonly"
+                            _write ? "readwrite" : "readonly"
                         ));
                     }
                 }
