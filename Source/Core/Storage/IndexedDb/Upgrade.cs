@@ -1,6 +1,6 @@
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Upgrade
+    public class Upgrade : IUpgrade
     {
         private readonly int _version;
         private readonly List<Storage> _storages;

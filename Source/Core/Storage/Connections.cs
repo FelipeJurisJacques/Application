@@ -1,13 +1,13 @@
 using Microsoft.JSInterop;
 
-namespace Application.Source.Core.Storage.IndexedDb
+namespace Application.Source.Core.Storage
 {
     public class Connections(IJSRuntime js)
     {
         internal readonly IJSRuntime JS = js;
-        private readonly List<Connection> _connections = [];
+        private readonly List<IConnection> _connections = [];
 
-        public Connection GetConnection(string name)
+        public IConnection GetConnection(string name)
         {
             foreach (var conn in _connections)
             {
@@ -16,7 +16,7 @@ namespace Application.Source.Core.Storage.IndexedDb
                     return conn;
                 }
             }
-            var connection = new Connection(this, name);
+            var connection = new IConnection(this, name);
             _connections.Add(connection);
             return connection;
         }

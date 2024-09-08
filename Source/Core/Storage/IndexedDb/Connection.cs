@@ -2,22 +2,26 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Connection
+    public class Connection : IConnection
     {
-        internal Upgrade? _upgrade;
-        public readonly string Name;
-        public readonly Connections Connections;
+        internal IUpgrade? _upgrade;
+        private readonly string _name;
+        private readonly Connections _connections;
         internal readonly List<Transaction> _transactions;
         private TaskCompletionSource<IJSObjectReference>? _tcs;
 
         internal Connection(Connections connections, string name)
         {
-            Name = name;
+            _name = name;
             _tcs = null;
             _upgrade = null;
-            Connections = connections;
+            _connections = connections;
             _transactions = [];
         }
+
+        public string Name => _name;
+
+        public Connections Connections => _connections;
 
         public async void Open()
         {
@@ -48,12 +52,12 @@ namespace Application.Source.Core.Storage.IndexedDb
             }
         }
 
-        public async void Upgrade(Upgrade upgrade)
+        public async void Upgrade(IUpgrade upgrade)
         {
             await UpgradeAsync(upgrade);
         }
 
-        public async Task UpgradeAsync(Upgrade upgrade)
+        public async Task UpgradeAsync(IUpgrade upgrade)
         {
             if (_tcs != null)
             {
@@ -104,22 +108,22 @@ namespace Application.Source.Core.Storage.IndexedDb
             }
         }
 
-        public Transaction Transaction(string name)
+        public ITransaction Transaction(string name)
         {
             return Transaction([name], false);
         }
 
-        public Transaction Transaction(string name, bool write)
+        public ITransaction Transaction(string name, bool write)
         {
             return Transaction([name], write);
         }
 
-        public Transaction Transaction(List<string> names)
+        public ITransaction Transaction(List<string> names)
         {
             return Transaction(names, false);
         }
 
-        public Transaction Transaction(List<string> names, bool write)
+        public ITransaction Transaction(List<string> names, bool write)
         {
             var transaction = new Transaction(this, names, write);
             _transactions.Add(transaction);
@@ -127,22 +131,22 @@ namespace Application.Source.Core.Storage.IndexedDb
             return transaction;
         }
 
-        public async Task<Transaction> TransactionAsync(string name)
+        public async Task<ITransaction> TransactionAsync(string name)
         {
             return await TransactionAsync([name], false);
         }
 
-        public async Task<Transaction> TransactionAsync(string name, bool write)
+        public async Task<ITransaction> TransactionAsync(string name, bool write)
         {
             return await TransactionAsync([name], write);
         }
 
-        public async Task<Transaction> TransactionAsync(List<string> names)
+        public async Task<ITransaction> TransactionAsync(List<string> names)
         {
             return await TransactionAsync(names, false);
         }
 
-        public async Task<Transaction> TransactionAsync(List<string> names, bool write)
+        public async Task<ITransaction> TransactionAsync(List<string> names, bool write)
         {
             var transaction = new Transaction(this, names, write);
             _transactions.Add(transaction);

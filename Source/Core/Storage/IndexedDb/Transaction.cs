@@ -2,11 +2,11 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Core.Storage.IndexedDb
 {
-    public class Transaction
+    public class Transaction : ITransaction
     {
         private bool _closed;
-        public readonly bool Write;
-        public readonly Connection Connection;
+        private readonly bool _write;
+        private readonly Connection _connection;
         internal IJSObjectReference? Reference;
         private readonly List<Storage> _storages;
         private TaskCompletionSource<IJSObjectReference>? _tcs;
@@ -18,16 +18,20 @@ namespace Application.Source.Core.Storage.IndexedDb
                 throw new InvalidOperationException("storage name list is empty");
             }
             _tcs = null;
-            Write = write;
+            _write = write;
             _closed = false;
             _storages = [];
             Reference = null;
-            Connection = connection;
+            _connection = connection;
             foreach (var name in names)
             {
                 _storages.Add(new Storage(name));
             }
         }
+
+        public bool Write => _write;
+
+        public IConnection Connection => _connection;
 
         public List<Storage> Storages => _storages;
 
