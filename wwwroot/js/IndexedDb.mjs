@@ -54,4 +54,33 @@ export class IndexedDb {
     constructor(dotNetObject) {
         this.#dotNetObject = dotNetObject
     }
+
+    transaction(dotNetObject, names, mode, options = null) {
+        return new IndexedDbTransaction(
+            dotNetObject,
+            options ? this.#connection.transaction(
+                names,
+                mode,
+                options
+            ) : this.#connection.transaction(
+                names,
+                mode
+            )
+        )
+    }
+}
+
+class IndexedDbTransaction {
+
+    /**
+     * @var IDBTransaction
+     */
+    #transaction
+
+    #dotNetObject
+
+    constructor(dotNetObject, transaction) {
+        this.#transaction = transaction
+        this.#dotNetObject = dotNetObject
+    }
 }

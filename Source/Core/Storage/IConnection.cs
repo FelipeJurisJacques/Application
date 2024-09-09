@@ -3,7 +3,6 @@ namespace Application.Source.Core.Storage
     public interface IConnection
     {
         string Name { get; }
-        Connections Connections { get; }
         void Open();
         Task OpenAsync();
         void Upgrade(IUpgrade upgrade);
