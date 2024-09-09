@@ -4,6 +4,7 @@ namespace Application.Source.Core.Storage.IndexedDb
 {
     public class Connections(IJSRuntime js)
     {
+        internal readonly bool Debug = true;
         internal readonly IJSRuntime JS = js;
         private readonly List<IConnection> _connections = [];
 

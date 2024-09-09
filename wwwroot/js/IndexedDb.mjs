@@ -1,18 +1,18 @@
 export class IndexedDb {
 
     /**
-     * @var IDBOpenDBRequest
+     * @var IDBDatabase
      */
     #connection
 
     #dotNetObject
 
     static open(dotNetObject, name, upgrade = null) {
-        const instance = new this(dotNetObject)
         return new Promise((resolve, reject) => {
+            let open // IDBOpenDBRequest
             if (upgrade && upgrade.version) {
-                instance.#connection = window.indexedDB.open(name, upgrade.version)
-                instance.#connection.onupgradeneeded = event => {
+                open = window.indexedDB.open(name, upgrade.version)
+                open.onupgradeneeded = event => {
                     const connection = event.target.result
                     const transaction = event.target.transaction
                     for (let store of upgrade.stores) {
@@ -40,33 +40,34 @@ export class IndexedDb {
                     }
                 }
             } else {
-                instance.#connection = window.indexedDB.open(name)
+                open = window.indexedDB.open(name)
             }
-            instance.#connection.onerror = event => {
+            open.onerror = event => {
                 reject(event.target.error)
             }
-            instance.#connection.onsuccess = event => {
-                resolve(instance)
+            open.onsuccess = event => {
+                resolve(new this(dotNetObject, event.target.result))
             }
         })
     }
 
-    constructor(dotNetObject) {
+    constructor(dotNetObject, connection) {
+        this.#connection = connection
         this.#dotNetObject = dotNetObject
+        this.#connection.onclose = event => {
+            this.#dotNetObject.invokeMethodAsync('OnEvent', event.type)
+        }
     }
 
     transaction(dotNetObject, names, mode, options = null) {
-        return new IndexedDbTransaction(
-            dotNetObject,
-            options ? this.#connection.transaction(
-                names,
-                mode,
-                options
-            ) : this.#connection.transaction(
-                names,
-                mode
-            )
-        )
+        return new IndexedDbTransaction(dotNetObject, options ? this.#connection.transaction(
+            names,
+            mode,
+            options
+        ) : this.#connection.transaction(
+            names,
+            mode
+        ))
     }
 }
 
@@ -82,5 +83,14 @@ class IndexedDbTransaction {
     constructor(dotNetObject, transaction) {
         this.#transaction = transaction
         this.#dotNetObject = dotNetObject
+        this.#transaction.onerror = event => {
+            this.#dotNetObject.invokeMethodAsync('OnEvent', event.type)
+        }
+        this.#transaction.onabort = event => {
+            this.#dotNetObject.invokeMethodAsync('OnEvent', event.type)
+        }
+        this.#transaction.oncomplete = event => {
+            this.#dotNetObject.invokeMethodAsync('OnEvent', event.type)
+        }
     }
 }

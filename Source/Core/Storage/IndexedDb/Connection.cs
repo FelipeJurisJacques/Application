@@ -32,6 +32,13 @@ namespace Application.Source.Core.Storage.IndexedDb
         {
             if (_tcs == null)
             {
+                if (Connections.Debug)
+                {
+                    await Connections.JS.InvokeVoidAsync(
+                        "window.console.log",
+                        "Opening database " + Name
+                    );
+                }
                 _tcs = new();
                 try
                 {
@@ -40,10 +47,24 @@ namespace Application.Source.Core.Storage.IndexedDb
                         DotNetObjectReference.Create(this),
                         Name
                     ));
+                    if (Connections.Debug)
+                    {
+                        await Connections.JS.InvokeVoidAsync(
+                            "window.console.log",
+                            "Opened database " + Name
+                        );
+                    }
                 }
                 catch (Exception error)
                 {
                     _tcs.SetException(error);
+                    if (Connections.Debug)
+                    {
+                        await Connections.JS.InvokeVoidAsync(
+                            "window.console.error",
+                            error.Message
+                        );
+                    }
                 }
             }
             else
@@ -62,6 +83,13 @@ namespace Application.Source.Core.Storage.IndexedDb
             if (_tcs != null)
             {
                 throw new InvalidOperationException("data base previous opened");
+            }
+            if (Connections.Debug)
+            {
+                await Connections.JS.InvokeVoidAsync(
+                    "window.console.log",
+                    "Opening and upgrading database " + Name
+                );
             }
             _upgrade = upgrade;
             _tcs = new();
@@ -112,10 +140,24 @@ namespace Application.Source.Core.Storage.IndexedDb
                         version = upgrade.Version,
                     }
                 ));
+                if (Connections.Debug)
+                {
+                    await Connections.JS.InvokeVoidAsync(
+                        "window.console.log",
+                        "Opened database " + Name
+                    );
+                }
             }
             catch (Exception error)
             {
                 _tcs.SetException(error);
+                if (Connections.Debug)
+                {
+                    await Connections.JS.InvokeVoidAsync(
+                        "window.console.error",
+                        error.Message
+                    );
+                }
             }
         }
 
@@ -171,8 +213,15 @@ namespace Application.Source.Core.Storage.IndexedDb
         }
 
         [JSInvokable]
-        public void OnEvent(string type)
+        public async Task OnEvent(string type)
         {
+            if (Connections.Debug)
+            {
+                await Connections.JS.InvokeVoidAsync(
+                    "window.console.log",
+                    "Event type " + type + " on database " + Name
+                );
+            }
         }
     }
 }

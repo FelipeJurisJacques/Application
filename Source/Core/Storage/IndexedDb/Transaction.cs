@@ -44,6 +44,13 @@ namespace Application.Source.Core.Storage.IndexedDb
         {
             if (_tcs == null)
             {
+                if (_connection.Connections.Debug)
+                {
+                    await _connection.Connections.JS.InvokeVoidAsync(
+                        "window.console.log",
+                        "Transaction is starting in database " + _connection.Name
+                    );
+                }
                 _tcs = new();
                 try
                 {
@@ -67,12 +74,26 @@ namespace Application.Source.Core.Storage.IndexedDb
                             names,
                             _write ? "readwrite" : "readonly"
                         ));
+                        if (_connection.Connections.Debug)
+                        {
+                            await _connection.Connections.JS.InvokeVoidAsync(
+                                "window.console.log",
+                                "Transaction is started in database " + _connection.Name
+                            );
+                        }
                     }
                 }
                 catch (Exception error)
                 {
                     _closed = true;
                     _tcs.SetException(error);
+                    if (_connection.Connections.Debug)
+                    {
+                        await _connection.Connections.JS.InvokeVoidAsync(
+                            "window.console.log",
+                            error.Message
+                        );
+                    }
                 }
             }
             else
@@ -108,6 +129,18 @@ namespace Application.Source.Core.Storage.IndexedDb
         internal async Task<IJSObjectReference?> GetReferenceAsync()
         {
             return _tcs == null ? null : await _tcs.Task;
+        }
+
+        [JSInvokable]
+        public async Task OnEvent(string type)
+        {
+            if (_connection.Connections.Debug)
+            {
+                await _connection.Connections.JS.InvokeVoidAsync(
+                    "window.console.log",
+                    "Event type " + type + " on transaction in database " + _connection.Name
+                );
+            }
         }
     }
 }

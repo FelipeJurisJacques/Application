@@ -3,42 +3,41 @@ namespace Application.Source.Core.Storage.IndexedDb
     public class Storage : IStorage
     {
         public readonly string _name;
-        private readonly Field? _key;
         private readonly List<IField> _fields;
         private readonly Transaction? _transaction;
 
         public Storage(string name)
         {
-            _key = null;
             _name = name;
             _fields = [];
             _transaction = null;
         }
 
-        public Storage(string name, List<Field> fields)
+        public Storage(string name, List<IField> fields)
         {
-            _key = null;
             _name = name;
-            _fields = [];
+            _fields = fields;
             _transaction = null;
+            var key = false;
+            List<string> names = [];
             foreach (var field in fields)
             {
-                if (field.Key)
+                if (field.Properties.Contains(FieldProperty.KEY))
                 {
-                    if (_key == null)
-                    {
-                        _key = field;
-                    }
-                    else
+                    if (names.Contains(field.Name))
                     {
                         throw new InvalidOperationException(
-                            "primary key is duplicated in storage " + _name
+                            "field " + field.Name + " is duplicated in storage " + name
                         );
                     }
-                }
-                else
-                {
-                    _fields.Add(field);
+                    names.Add(field.Name);
+                    if (key)
+                    {
+                        throw new InvalidOperationException(
+                            "primary key is duplicated in storage " + name
+                        );
+                    }
+                    key = true;
                 }
             }
         }
@@ -51,8 +50,6 @@ namespace Application.Source.Core.Storage.IndexedDb
         }
 
         public string Name => _name;
-
-        public Field? Key => _key;
 
         public List<IField> Fields => _fields;
 
