@@ -35,5 +35,6 @@ var upgrade = new Upgrade(1, [
 ]);
 var connection = context.IndexedDb.GetConnection("storage");
 connection.Upgrade(upgrade);
+var transaction = connection.Transaction("files");
 
 await host.RunAsync();
