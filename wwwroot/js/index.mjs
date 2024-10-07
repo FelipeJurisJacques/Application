@@ -1,20 +1,6 @@
 // import { IDBFactory } from "./IndexedDb.mjs"
 
-IDBDatabase.prototype.callGetterAttribute = function (key) {
-    return this[key]
-}
-
-IDBDatabase.prototype.callSetterAttribute = function (key, value) {
-    this[key] = value
-}
-
-IDBOpenDBRequest.prototype.callGetterAttribute = function (key) {
-    return this[key]
-}
-
-IDBOpenDBRequest.prototype.callSetterAttribute = function (key, value) {
-    this[key] = value
-}
+import { } from "./interoperability.mjs"
 
 window.interop = class Main {
     static #dotNetObject = null
