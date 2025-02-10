@@ -1,50 +1,25 @@
-# Ignore diretórios de build
-bin/
-obj/
-obj/Debug
-
-# Ignore arquivos de logs
+obj/*
 *.log
-
-# Ignore arquivos do Visual Studio
 .vs/
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
-
-# Ignore configurações de ambiente
 .env
 .env.local
 .env.*.local
-
-# Ignore o diretório de pacotes do NuGet
 packages/
 *.nupkg
 *.snupkg
-
-# Ignore o diretório de pacotes do NPM
 node_modules/
-
-# Ignore arquivos de cache e temporários
 *.tmp
 *.cache
 *.csproj.user
-
-# Ignore arquivos de publicação
 publish/
 out/
-
-# Ignore arquivos de backup
 *.bak
-
-# Ignore arquivos específicos do macOS
 .DS_Store
-
-# Ignore arquivos específicos do Windows
 Thumbs.db
 ehthumbs.db
-Desktop.ini
-
-# Ignore arquivos de lock
+Desktop.inick
 project.lock.json
