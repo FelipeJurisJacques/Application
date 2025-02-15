@@ -1,7 +1,5 @@
+/bin/**
+/obj/**
 /App.sln
-**/node_modules/**
-/Application/bin/**
-/Application/obj/**
-**/package-lock.json
-/Application/Dockerfile
-/Application/nginx.conf]
+/node_modules/**
+/package-lock.json
