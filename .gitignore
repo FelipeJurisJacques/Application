@@ -1,6 +1,6 @@
 /obj/**
-/App.sln
 /bin/Debug/**
 /bin/Release/**
+/Application.sln
 /node_modules/**
 /package-lock.json
