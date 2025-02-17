@@ -7,7 +7,7 @@ docker container inspect typescript-compiler-container >nul 2>&1
 if %errorlevel% equ 0 (
     docker ps -q --filter "name=typescript-compiler-container" > nul
     if %errorlevel%==1 (
-        docker start typescript-compiler-container
+        docker start typescript-compiler-container tail -f /dev/null
     )
 ) else (
     docker run -v %CD%:/app -d --name typescript-compiler-container typescript-compiler tail -f /dev/null

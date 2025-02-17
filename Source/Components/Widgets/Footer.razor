@@ -1,0 +1,135 @@
+@implements IObserver
+@* @using Application.Source.Core *@
+@using Application.Source.Utils.Observer
+@using Application.Source.Components.Svgs
+@* @inject Application.Source.Core.Context context *@
+
+<footer style="clip-path: @GetClipPath1(); background-color: #1a1aff;">
+    <div style="clip-path: @GetClipPath2(); background-color: #00f2ff;">
+        <button class=" bar" @onclick="ToggleDropdown" type="button" title="theme">
+            <Sun />
+            @* @switch (context.Themes.Theme.Name)
+        {
+            case "light":
+                <Sun />
+                break;
+            case "high_contrast":
+                <HighContrast />
+                break;
+            case "dark":
+            default:
+                <Moon />
+                break;
+        } *@
+        </button>
+        <ul class="@(showDropdown ? "visible" : "hidden")">
+            <li>
+                <button @onclick="SetDarkTheme" type="button">
+                    <Moon />
+                </button>
+            </li>
+            <li>
+                <button @onclick="SetLightTheme">
+                    <Sun />
+                </button>
+            </li>
+            <li>
+                <button @onclick="SetHighContrastTheme">
+                    <HighContrast />
+                </button>
+            </li>
+        </ul>
+    </div>
+</footer>
+
+@code {
+    private bool showDropdown = false;
+
+    protected override void OnInitialized()
+    {
+        @* context.Themes.OnChange.Subscribe(this); *@
+    }
+
+    private void ToggleDropdown()
+    {
+        showDropdown = !showDropdown;
+        StateHasChanged();
+    }
+
+    public void Update(Subject theme)
+    {
+        @* if (theme is Themes.OnChangeSubject)
+        {
+            StateHasChanged();
+        } *@
+    }
+
+    private async void SetDarkTheme()
+    {
+        @* await context.Themes.SetCurrentThemeName("dark"); *@
+    }
+
+    private async void SetLightTheme()
+    {
+        @* await context.Themes.SetCurrentThemeName("light"); *@
+    }
+
+    private async void SetHighContrastTheme()
+    {
+        @* await context.Themes.SetCurrentThemeName("high_contrast"); *@
+    }
+
+    private string GetClipPath1()
+    {
+        List<string> points = [];
+        points.Add("0% 100%");
+        points.Add("0% 20px");
+        points.Add("calc(50% - 150px) 20px");
+        points.Add("calc(50% - 140px) 5px");
+        points.Add("calc(50% - 40px) 5px");
+        points.Add("calc(50% - 30px) 20px");
+        points.Add("calc(50% + 30px) 20px");
+        points.Add("calc(50% + 40px) 5px");
+        points.Add("calc(50% + 140px) 5px");
+        points.Add("calc(50% + 150px) 20px");
+        points.Add("100% 20px");
+        points.Add("100% 100%");
+        points.Add("0px 100%");
+        return "polygon(" + string.Join(", ", points) + ")";
+    }
+
+    private string GetClipPath2()
+    {
+        List<string> points = [];
+        points.Add("0% 20px");
+        points.Add("calc(50% - 150px) 20px");
+        points.Add("calc(50% - 140px) 5px");
+        points.Add("calc(50% - 40px) 5px");
+        points.Add("calc(50% - 30px) 20px");
+        points.Add("calc(50% + 30px) 20px");
+        points.Add("calc(50% + 40px) 5px");
+        points.Add("calc(50% + 140px) 5px");
+        points.Add("calc(50% + 150px) 20px");
+        points.Add("100% 20px");
+        points.Add("100% 22px");
+        points.Add("calc(50% + 150px) 22px");
+        points.Add("calc(50% + 140px) 7px");
+        points.Add("calc(50% + 40px) 7px");
+        points.Add("calc(50% + 30px) 22px");
+        points.Add("calc(50% - 30px) 22px");
+        points.Add("calc(50% - 40px) 7px");
+        points.Add("calc(50% - 140px) 7px");
+        points.Add("calc(50% - 150px) 22px");
+        points.Add("0% 22px");
+        points.Add("0% 20px");
+        for (int i = 0; i < 100; i += 2) {
+            points.Add($"0% {i}%");
+            points.Add($"100% {i}%");
+            points.Add($"100% {i + 1}%");
+            points.Add($"0% {i + 1}%");
+            points.Add($"0% {i}%");
+        }
+        points.Add("0% 0%");
+        return "polygon(" + string.Join(", ", points) + ")";
+    }
+}
