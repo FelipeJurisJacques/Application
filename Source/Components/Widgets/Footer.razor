@@ -4,11 +4,14 @@
 @using Application.Source.Components.Svgs
 @* @inject Application.Source.Core.Context context *@
 
-<footer style="clip-path: @GetClipPath1(); background-color: #1a1aff;">
-    <div style="clip-path: @GetClipPath2(); background-color: #00f2ff;">
-        <button class=" bar" @onclick="ToggleDropdown" type="button" title="theme">
-            <Sun />
-            @* @switch (context.Themes.Theme.Name)
+<footer style="@($"background-image: {GetSvg()}; background-size: 100% 100%; background-repeat: no-repeat;")">
+    <div style="clip-path: @GetClipPathBorder();">
+        <div style="clip-path: @GetClipPathBackground(); background-color: #1a1aff;">
+            @* <div style="clip-path: @GetClipPathContour(); background-color: #00f2ff;"> *@
+            <div style="clip-path: @GetClipPathContour(); background-color: #fff;">
+                <button class=" bar" @onclick="ToggleDropdown" type="button" title="theme">
+                    <Sun />
+                    @* @switch (context.Themes.Theme.Name)
         {
             case "light":
                 <Sun />
@@ -21,24 +24,26 @@
                 <Moon />
                 break;
         } *@
-        </button>
-        <ul class="@(showDropdown ? "visible" : "hidden")">
-            <li>
-                <button @onclick="SetDarkTheme" type="button">
-                    <Moon />
                 </button>
-            </li>
-            <li>
-                <button @onclick="SetLightTheme">
-                    <Sun />
-                </button>
-            </li>
-            <li>
-                <button @onclick="SetHighContrastTheme">
-                    <HighContrast />
-                </button>
-            </li>
-        </ul>
+                <ul class="@(showDropdown ? "visible" : "hidden")">
+                    <li>
+                        <button @onclick="SetDarkTheme" type="button">
+                            <Moon />
+                        </button>
+                    </li>
+                    <li>
+                        <button @onclick="SetLightTheme">
+                            <Sun />
+                        </button>
+                    </li>
+                    <li>
+                        <button @onclick="SetHighContrastTheme">
+                            <HighContrast />
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </footer>
 
@@ -79,57 +84,84 @@
         @* await context.Themes.SetCurrentThemeName("high_contrast"); *@
     }
 
-    private string GetClipPath1()
+    private string GetClipPathBorder()
     {
         List<string> points = [];
-        points.Add("0% 100%");
-        points.Add("0% 20px");
-        points.Add("calc(50% - 150px) 20px");
-        points.Add("calc(50% - 140px) 5px");
-        points.Add("calc(50% - 40px) 5px");
-        points.Add("calc(50% - 30px) 20px");
-        points.Add("calc(50% + 30px) 20px");
-        points.Add("calc(50% + 40px) 5px");
-        points.Add("calc(50% + 140px) 5px");
-        points.Add("calc(50% + 150px) 20px");
-        points.Add("100% 20px");
+        points.Add("0% 15px");
+        points.Add("calc(50% - 170px) 15px");
+        points.Add("calc(50% - 160px) 5px");
+        points.Add("calc(50% - 50px) 5px");
+        points.Add("calc(50% - 40px) 15px");
+        points.Add("calc(50% + 40px) 15px");
+        points.Add("calc(50% + 50px) 5px");
+        points.Add("calc(50% + 160px) 5px");
+        points.Add("calc(50% + 170px) 15px");
+        points.Add("100% 15px");
         points.Add("100% 100%");
-        points.Add("0px 100%");
+        points.Add("0% 100%");
+        points.Add("0% 15px");
         return "polygon(" + string.Join(", ", points) + ")";
     }
 
-    private string GetClipPath2()
+    private string GetClipPathContour()
     {
         List<string> points = [];
-        points.Add("0% 20px");
-        points.Add("calc(50% - 150px) 20px");
-        points.Add("calc(50% - 140px) 5px");
-        points.Add("calc(50% - 40px) 5px");
-        points.Add("calc(50% - 30px) 20px");
-        points.Add("calc(50% + 30px) 20px");
-        points.Add("calc(50% + 40px) 5px");
-        points.Add("calc(50% + 140px) 5px");
-        points.Add("calc(50% + 150px) 20px");
-        points.Add("100% 20px");
-        points.Add("100% 22px");
-        points.Add("calc(50% + 150px) 22px");
-        points.Add("calc(50% + 140px) 7px");
-        points.Add("calc(50% + 40px) 7px");
-        points.Add("calc(50% + 30px) 22px");
-        points.Add("calc(50% - 30px) 22px");
-        points.Add("calc(50% - 40px) 7px");
-        points.Add("calc(50% - 140px) 7px");
-        points.Add("calc(50% - 150px) 22px");
-        points.Add("0% 22px");
-        points.Add("0% 20px");
-        for (int i = 0; i < 100; i += 2) {
+        points.Add("0% 15px");
+        points.Add("calc(50% - 170px) 15px");
+        points.Add("calc(50% - 160px) 5px");
+        points.Add("calc(50% - 50px) 5px");
+        points.Add("calc(50% - 40px) 15px");
+        points.Add("calc(50% + 40px) 15px");
+        points.Add("calc(50% + 50px) 5px");
+        points.Add("calc(50% + 160px) 5px");
+        points.Add("calc(50% + 170px) 15px");
+        points.Add("100% 15px");
+        points.Add("100% 17px");
+        points.Add("calc(50% + 169px) 17px");
+        points.Add("calc(50% + 159px) 7px");
+        points.Add("calc(50% + 51px) 7px");
+        points.Add("calc(50% + 41px) 17px");
+        points.Add("calc(50% - 41px) 17px");
+        points.Add("calc(50% - 51px) 7px");
+        points.Add("calc(50% - 159px) 7px");
+        points.Add("calc(50% - 169px) 17px");
+        points.Add("0% 17px");
+        points.Add("0% 15px");
+        return "polygon(" + string.Join(", ", points) + ")";
+    }
+
+    private string GetClipPathBackground()
+    {
+        List<string> points = [];
+        for (int i = 0; i < 100; i += 2)
+        {
             points.Add($"0% {i}%");
             points.Add($"100% {i}%");
             points.Add($"100% {i + 1}%");
             points.Add($"0% {i + 1}%");
             points.Add($"0% {i}%");
         }
-        points.Add("0% 0%");
         return "polygon(" + string.Join(", ", points) + ")";
+    }
+
+    private string GetSvg()
+    {
+        var width = 340;
+        var height = 30;
+        List<string> points = [];
+        points.Add($"50 5");
+        points.Add($"{width - 10} 5");
+        points.Add($"{width} {height}");
+        points.Add($"0 {height}");
+        points.Add($"50 5");
+        var path = string.Join(" ", points);
+        var svg = "<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>";
+        svg += "<clipPath id='clip'>";
+        svg += $"<polygon points='{path}' />";
+        svg += "</clipPath>";
+        svg += "<rect x='calc(50% - 170px)' y='0%' width='340px' height='30%' clip-path='url(#clip)' />";
+        @* svg += "<rect x='0%' y='30%' width='100%' height='70%' />"; *@
+        svg += "</svg>";
+        return $"url('data:image/svg+xml,{Uri.EscapeDataString(svg)}')";
     }
 }
