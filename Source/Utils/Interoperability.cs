@@ -4,10 +4,10 @@ namespace Application.Source.Utils
 {
     public class Interoperability
     {
-        private readonly IJSRuntime? js;
+        private readonly IJSRuntime js;
         private readonly IJSObjectReference? handler;
 
-        protected Interoperability(IJSRuntime reference)
+        public Interoperability(IJSRuntime reference)
         {
             js = reference;
             handler = null;

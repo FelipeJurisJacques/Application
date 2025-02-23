@@ -1,17 +1,13 @@
 @implements IObserver
-@* @using Application.Source.Core *@
+@using Application.Source.Helpers
 @using Application.Source.Utils.Observer
-@using Application.Source.Components.Svgs
-@* @inject Application.Source.Core.Context context *@
+@using Application.Source.Layouts.Components.Svgs
+@inject Application.Source.Utils.Interoperability interop
 
-<footer style="@($"background-image: {GetSvg()}; background-size: 100% 100%; background-repeat: no-repeat;")">
-    <div style="clip-path: @GetClipPathBorder();">
-        <div style="clip-path: @GetClipPathBackground(); background-color: #1a1aff;">
-            @* <div style="clip-path: @GetClipPathContour(); background-color: #00f2ff;"> *@
-            <div style="clip-path: @GetClipPathContour(); background-color: #fff;">
-                <button class=" bar" @onclick="ToggleDropdown" type="button" title="theme">
-                    <Sun />
-                    @* @switch (context.Themes.Theme.Name)
+<div>
+    <button class=" bar" @onclick="ToggleDropdown" type="button" title="theme">
+        <Sun />
+        @* @switch (context.Themes.Theme.Name)
         {
             case "light":
                 <Sun />
@@ -24,34 +20,33 @@
                 <Moon />
                 break;
         } *@
-                </button>
-                <ul class="@(showDropdown ? "visible" : "hidden")">
-                    <li>
-                        <button @onclick="SetDarkTheme" type="button">
-                            <Moon />
-                        </button>
-                    </li>
-                    <li>
-                        <button @onclick="SetLightTheme">
-                            <Sun />
-                        </button>
-                    </li>
-                    <li>
-                        <button @onclick="SetHighContrastTheme">
-                            <HighContrast />
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</footer>
+    </button>
+    <ul class="@(showDropdown ? "visible" : "hidden")">
+        <li>
+            <button @onclick="SetDarkTheme" type="button">
+                <Moon />
+            </button>
+        </li>
+        <li>
+            <button @onclick="SetLightTheme">
+                <Sun />
+            </button>
+        </li>
+        <li>
+            <button @onclick="SetHighContrastTheme">
+                <HighContrast />
+            </button>
+        </li>
+    </ul>
+</div>
 
 @code {
     private bool showDropdown = false;
+    private VectorialScalable style = null;
 
     protected override void OnInitialized()
     {
+        style = new VectorialScalable(interop);
         @* context.Themes.OnChange.Subscribe(this); *@
     }
 
