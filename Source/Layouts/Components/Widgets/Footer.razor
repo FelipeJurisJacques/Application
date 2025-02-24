@@ -1,6 +1,7 @@
 @implements IObserver
 @using Application.Source.Helpers
 @using Application.Source.Utils.Observer
+@inherits Application.Source.Helpers.Widget
 @using Application.Source.Layouts.Components.Svgs
 @inject Application.Source.Utils.Interoperability interop
 
@@ -42,12 +43,11 @@
 
 @code {
     private bool showDropdown = false;
-    private VectorialScalable style = null;
 
     protected override void OnInitialized()
     {
-        style = new VectorialScalable(interop);
         @* context.Themes.OnChange.Subscribe(this); *@
+        var clip = new VectorialScalable(interop, this);
     }
 
     private void ToggleDropdown()

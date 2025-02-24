@@ -3,11 +3,17 @@
 import typescript from '@rollup/plugin-typescript'
 
 export default {
-  input: 'wwwroot/source/service-worker.ts',
+  input: {
+    'index': 'wwwroot/source/index.ts',
+    'service-worker': 'wwwroot/source/service-worker.ts',
+  },
   output: {
-    file: 'wwwroot/dist/service-worker.js',
     format: 'es',
     sourcemap: false,
+    dir: 'wwwroot/dist/',
+    entryFileNames: (chunkInfo) => {
+      return chunkInfo.name === 'index' ? 'index.mjs' : '[name].js';
+    },
   },
   plugins: [
     typescript({
