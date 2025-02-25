@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace Application.Source.Helpers
 {
-    public class Widget: ComponentBase
+    public abstract class Widget: ComponentBase
     {
-        public void Render()
+        public virtual void Render()
         {
             StateHasChanged();
         }

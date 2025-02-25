@@ -1,8 +1,9 @@
-function initialize(helper) {
-    window.addEventListener('resize', event => {
-        helper.invokeMethodAsync('OnMessage');
+function listenResize(helper) {
+    helper.invokeMethodAsync('OnResize', screen.width, screen.height);
+    window.addEventListener('resize', () => {
+        helper.invokeMethodAsync('OnResize', screen.width, screen.height);
     });
 }
-window.initialize = initialize;
+window.listenResize = listenResize;
 
-export { initialize as default };
+export { listenResize as default };

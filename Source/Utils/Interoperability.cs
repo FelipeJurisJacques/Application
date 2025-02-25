@@ -2,13 +2,13 @@ using Microsoft.JSInterop;
 
 namespace Application.Source.Utils
 {
-    public class Interoperability
+    public class Interop
     {
         private readonly IJSRuntime js;
         private readonly IJSObjectReference? handler;
-        private readonly DotNetObjectReference<Interoperability> helper;
+        private readonly DotNetObjectReference<Interop> helper;
 
-        public Interoperability(IJSRuntime reference)
+        public Interop(IJSRuntime reference)
         {
             js = reference;
             handler = null;
@@ -52,27 +52,21 @@ namespace Application.Source.Utils
             throw new InvalidOperationException("IJSRuntime is not available");
         }
 
-        [JSInvokable]
-        public void OnMessage()
-        {
-            //
-        }
-
         public void Dispose()
         {
             helper.Dispose();
         }
 
-        private async void Initialize()
+        private void Initialize()
         {
-            try
-            {
-                await js.InvokeVoidAsync("initialize", helper);
-            }
-            catch (Exception error)
-            {
-                await js.InvokeVoidAsync("console.error", "function initialize() non callable in JS");
-            }
+            // try
+            // {
+            //     await js.InvokeVoidAsync("initialize", helper);
+            // }
+            // catch (Exception error)
+            // {
+            //     await js.InvokeVoidAsync("console.error", "function initialize() non callable in JS");
+            // }
         }
     }
 }

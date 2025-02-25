@@ -1,11 +1,12 @@
 @implements IObserver
+@using Application.Source.Utils
 @using Application.Source.Helpers
 @using Application.Source.Utils.Observer
 @inherits Application.Source.Helpers.Widget
+@inject Application.Source.Utils.Screen screen
 @using Application.Source.Layouts.Components.Svgs
-@inject Application.Source.Utils.Interoperability interop
 
-<div>
+<div style="@style">
     <button class=" bar" @onclick="ToggleDropdown" type="button" title="theme">
         <Sun />
         @* @switch (context.Themes.Theme.Name)
@@ -42,12 +43,21 @@
 </div>
 
 @code {
+    private string style = "";
     private bool showDropdown = false;
 
     protected override void OnInitialized()
     {
         @* context.Themes.OnChange.Subscribe(this); *@
-        var clip = new VectorialScalable(interop, this);
+        screen.Subscribe(this);
+        base.OnInitialized();
+    }
+
+    public override void Render()
+    {
+        var clip = new VectorialScalable(screen.Width, screen.Height);
+        style = clip.GetStyle();
+        base.Render();
     }
 
     private void ToggleDropdown()

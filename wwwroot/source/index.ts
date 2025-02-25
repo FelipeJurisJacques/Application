@@ -1,13 +1,14 @@
-export default function initialize(helper: any) {
-    window.addEventListener('resize', event => {
-        helper.invokeMethodAsync('OnMessage')
+export default function listenResize(helper: any) {
+    helper.invokeMethodAsync('OnResize', screen.width, screen.height)
+    window.addEventListener('resize', () => {
+        helper.invokeMethodAsync('OnResize', screen.width, screen.height)
     })
 }
 
 declare global {
     interface Window {
-        initialize: typeof initialize
+        listenResize: typeof listenResize
     }
 }
 
-window.initialize = initialize
+window.listenResize = listenResize
