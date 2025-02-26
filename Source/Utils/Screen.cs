@@ -1,5 +1,5 @@
-using Application.Source.Helpers;
 using Microsoft.JSInterop;
+using Application.Source.Helpers;
 
 namespace Application.Source.Utils
 {

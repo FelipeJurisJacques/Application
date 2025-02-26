@@ -55,7 +55,36 @@
 
     public override void Render()
     {
-        var clip = new VectorialScalable(screen.Width, screen.Height);
+        var width = screen.Width;
+        var mw = (int) width / 2;
+        var clip = new VectorialScalable(width, 100);
+        List<VectorialScalable.Path> paths = [];
+        var path = new VectorialScalable.Path();
+        path.Add(0, 15);
+        path.Add(mw - 170, 15);
+        path.Add(mw - 160, 5);
+        path.Add(mw - 50, 5);
+        path.Add(mw - 40, 15);
+        path.Add(mw + 40, 15);
+        path.Add(mw + 50, 5);
+        path.Add(mw + 160, 5);
+        path.Add(mw + 170, 15);
+        path.Add(width, 15);
+        path.Add(width, 100);
+        path.Add(0, 100);
+        path.Add(0, 15);
+        paths.Add(path);
+        path = new VectorialScalable.Path();
+        for (int i = 0; i < 100; i += 2)
+        {
+            path.Add(0, i);
+            path.Add(width, i);
+            path.Add(width, i + 1);
+            path.Add(0, i + 1);
+            path.Add(0, i);
+        }
+        paths.Add(path);
+        clip.AddPolygon(paths, "#000000");
         style = clip.GetStyle();
         base.Render();
     }
