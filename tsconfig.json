@@ -4,8 +4,9 @@
         "module": "ESNext", // Usa módulos ES
         "lib": ["ESNext", "dom"], // Bibliotecas padrão
         "strict": true,
-        "esModuleInterop": true,
         "skipLibCheck": true,
+        "esModuleInterop": true,
+        "strictNullChecks":true,
         "forceConsistentCasingInFileNames": true,
         "outDir": "./wwwroot/dist",
         "rootDir": "./wwwroot/source",

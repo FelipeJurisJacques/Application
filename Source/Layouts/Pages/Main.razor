@@ -1,4 +1,17 @@
 @page "/"
+@inject Application.Source.Singletons.Agent agent
+
+<canvas id="background" width="1024" height="1024" />
 <div class="container">
-    <Application.Source.Layouts.Components.Widgets.Footer />
+    <Application.Source.Layouts.Components.Footer />
 </div>
+
+@code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            agent.Initialize();
+        }
+    }
+}

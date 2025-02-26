@@ -63,7 +63,7 @@ namespace Application.Source.Utils
             {
                 await js.InvokeVoidAsync("listenResize", helper);
             }
-            catch (Exception error)
+            catch (Exception)
             {
                 await js.InvokeVoidAsync("console.error", "function initialize() non callable in JS");
             }
