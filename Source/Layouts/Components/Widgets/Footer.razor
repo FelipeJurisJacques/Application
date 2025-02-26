@@ -53,11 +53,12 @@
         base.OnInitialized();
     }
 
-    public override void Render()
+    public override void Build()
     {
         var width = screen.Width;
         var mw = (int) width / 2;
-        var clip = new VectorialScalable(width, 100);
+
+        var clip = new VectorialScalable(width, 50);
         List<VectorialScalable.Path> paths = [];
         var path = new VectorialScalable.Path();
         path.Add(0, 15);
@@ -70,12 +71,13 @@
         path.Add(mw + 160, 5);
         path.Add(mw + 170, 15);
         path.Add(width, 15);
-        path.Add(width, 100);
-        path.Add(0, 100);
+        path.Add(width, 50);
+        path.Add(0, 50);
         path.Add(0, 15);
         paths.Add(path);
+
         path = new VectorialScalable.Path();
-        for (int i = 0; i < 100; i += 2)
+        for (int i = 0; i < 50; i += 2)
         {
             path.Add(0, i);
             path.Add(width, i);
@@ -84,9 +86,33 @@
             path.Add(0, i);
         }
         paths.Add(path);
-        clip.AddPolygon(paths, "#000000");
+        clip.AddPolygon(paths, "#1a1a1a");
+
+        path = new VectorialScalable.Path();
+        path.Add(0, 15);
+        path.Add(mw - 170, 15);
+        path.Add(mw - 160, 5);
+        path.Add(mw - 50, 5);
+        path.Add(mw - 40, 15);
+        path.Add(mw + 40, 15);
+        path.Add(mw + 50, 5);
+        path.Add(mw + 160, 5);
+        path.Add(mw + 170, 15);
+        path.Add(width, 15);
+        path.Add(width, 17);
+        path.Add(mw + 169, 17);
+        path.Add(mw + 159, 7);
+        path.Add(mw + 51, 7);
+        path.Add(mw + 41, 17);
+        path.Add(mw - 41, 17);
+        path.Add(mw - 51, 7);
+        path.Add(mw - 159, 7);
+        path.Add(mw - 169, 17);
+        path.Add(0, 17);
+        path.Add(0, 15);
+        clip.AddPolygon(path, "#00f2ff");
+
         style = clip.GetStyle();
-        base.Render();
     }
 
     private void ToggleDropdown()
@@ -116,86 +142,5 @@
     private async void SetHighContrastTheme()
     {
         @* await context.Themes.SetCurrentThemeName("high_contrast"); *@
-    }
-
-    private string GetClipPathBorder()
-    {
-        List<string> points = [];
-        points.Add("0% 15px");
-        points.Add("calc(50% - 170px) 15px");
-        points.Add("calc(50% - 160px) 5px");
-        points.Add("calc(50% - 50px) 5px");
-        points.Add("calc(50% - 40px) 15px");
-        points.Add("calc(50% + 40px) 15px");
-        points.Add("calc(50% + 50px) 5px");
-        points.Add("calc(50% + 160px) 5px");
-        points.Add("calc(50% + 170px) 15px");
-        points.Add("100% 15px");
-        points.Add("100% 100%");
-        points.Add("0% 100%");
-        points.Add("0% 15px");
-        return "polygon(" + string.Join(", ", points) + ")";
-    }
-
-    private string GetClipPathContour()
-    {
-        List<string> points = [];
-        points.Add("0% 15px");
-        points.Add("calc(50% - 170px) 15px");
-        points.Add("calc(50% - 160px) 5px");
-        points.Add("calc(50% - 50px) 5px");
-        points.Add("calc(50% - 40px) 15px");
-        points.Add("calc(50% + 40px) 15px");
-        points.Add("calc(50% + 50px) 5px");
-        points.Add("calc(50% + 160px) 5px");
-        points.Add("calc(50% + 170px) 15px");
-        points.Add("100% 15px");
-        points.Add("100% 17px");
-        points.Add("calc(50% + 169px) 17px");
-        points.Add("calc(50% + 159px) 7px");
-        points.Add("calc(50% + 51px) 7px");
-        points.Add("calc(50% + 41px) 17px");
-        points.Add("calc(50% - 41px) 17px");
-        points.Add("calc(50% - 51px) 7px");
-        points.Add("calc(50% - 159px) 7px");
-        points.Add("calc(50% - 169px) 17px");
-        points.Add("0% 17px");
-        points.Add("0% 15px");
-        return "polygon(" + string.Join(", ", points) + ")";
-    }
-
-    private string GetClipPathBackground()
-    {
-        List<string> points = [];
-        for (int i = 0; i < 100; i += 2)
-        {
-            points.Add($"0% {i}%");
-            points.Add($"100% {i}%");
-            points.Add($"100% {i + 1}%");
-            points.Add($"0% {i + 1}%");
-            points.Add($"0% {i}%");
-        }
-        return "polygon(" + string.Join(", ", points) + ")";
-    }
-
-    private string GetSvg()
-    {
-        var width = 340;
-        var height = 30;
-        List<string> points = [];
-        points.Add($"50 5");
-        points.Add($"{width - 10} 5");
-        points.Add($"{width} {height}");
-        points.Add($"0 {height}");
-        points.Add($"50 5");
-        var path = string.Join(" ", points);
-        var svg = "<svg width='100%' height='100%' xmlns='http://www.w3.org/2000/svg'>";
-        svg += "<clipPath id='clip'>";
-        svg += $"<polygon points='{path}' />";
-        svg += "</clipPath>";
-        svg += "<rect x='calc(50% - 170px)' y='0%' width='340px' height='30%' clip-path='url(#clip)' />";
-        @* svg += "<rect x='0%' y='30%' width='100%' height='70%' />"; *@
-        svg += "</svg>";
-        return $"url('data:image/svg+xml,{Uri.EscapeDataString(svg)}')";
     }
 }

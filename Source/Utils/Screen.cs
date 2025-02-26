@@ -36,10 +36,16 @@ namespace Application.Source.Utils
         }
 
         [JSInvokable]
-        public void OnResize(int width, int height)
+        public void SetSize(int width, int height)
         {
             this.width = width;
             this.height = height;
+        }
+
+        [JSInvokable]
+        public void OnResize(int width, int height)
+        {
+            SetSize(width, height);
             foreach (var widget in handler)
             {
                 widget.Render();

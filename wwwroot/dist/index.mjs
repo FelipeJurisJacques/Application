@@ -1,7 +1,7 @@
 function listenResize(helper) {
-    helper.invokeMethodAsync('OnResize', screen.width, screen.height);
+    helper.invokeMethodAsync('SetSize', window.innerWidth, window.innerHeight);
     window.addEventListener('resize', () => {
-        helper.invokeMethodAsync('OnResize', screen.width, screen.height);
+        helper.invokeMethodAsync('OnResize', window.innerWidth, window.innerHeight);
     });
 }
 window.listenResize = listenResize;

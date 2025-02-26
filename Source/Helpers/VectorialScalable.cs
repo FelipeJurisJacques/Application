@@ -12,6 +12,11 @@ namespace Application.Source.Helpers
             elements.Add(CreatePolygon(paths, color));
         }
 
+        public void AddPolygon(Path path, string color)
+        {
+            elements.Add(CreatePolygon(path, color));
+        }
+
         public string GetStyle()
         {
             var svg = $"<svg width='{width}px' height='{height}px' viewBox='0 0 {width} {height}' xmlns='http://www.w3.org/2000/svg'>";
@@ -36,7 +41,7 @@ namespace Application.Source.Helpers
             }
         }
 
-        private string CreateClipPath(string id, Path path)
+        private static string CreateClipPath(string id, Path path)
         {
             return $"<clipPath id='{id}'><polygon points='{path.Build()}' /></clipPath>";
         }
@@ -64,6 +69,11 @@ namespace Application.Source.Helpers
                     return $"<g clip-path='url(#{id})'>{CreatePolygon([.. paths.Skip(1)], color)}</g>";
                 }
             }
+        }
+
+        private static string CreatePolygon(Path path, string color)
+        {
+            return $"<polygon points='{path.Build()}' fill='{color}' />";
         }
     }
 }
