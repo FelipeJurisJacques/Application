@@ -5,6 +5,7 @@ export class Agent {
     private n: number
     private l1: number
     private l2: number
+    private ray: number
     private left: number
     private right: number
     private delta: number
@@ -16,16 +17,17 @@ export class Agent {
     private points_geometry: THREE.BufferGeometry
     
     public constructor() {
-        const length = 256
+        this.ray = 0.5
+        const length = Math.round(512 * this.ray)
         this.n = 1
-        this.l1 = length / 3
+        this.l1 = length / 5
         this.l2 = length / 7
         this.left = 0
         this.right = 0
         this.delta = 0.0
         this.offset = 0.0
         this.intensity = 0.0
-        this.points_depth = 16
+        this.points_depth = Math.round(16 * this.ray)
         this.points_length = length
         this.scene = new THREE.Scene()
 
@@ -45,7 +47,7 @@ export class Agent {
         const geometry = new THREE.BufferGeometry()
         const material = new THREE.PointsMaterial({
             color: 0xffffff,
-            size: 0.004,
+            size: 0.001 + Math.random() * 0.003,
             sizeAttenuation: true
         })
         const vertices = []
@@ -64,16 +66,55 @@ export class Agent {
 
     public animate() {
         this.animateWave()
-        this.delta += (this.intensity - this.delta) * 0.1
+        this.delta += (this.intensity - this.delta) * 0.2
     }
 
-    public speak(intensity: number) {
-        if (intensity < 0.0) {
+    public speak(message: string) {
+        const speak = new SpeechSynthesisUtterance(message)
+        speak.rate = 2
+        speak.pitch = 1
+        speak.volume = 1
+        window.speechSynthesis.speak(speak)
+        this.speaking(
+            message.toLocaleLowerCase(),
+            0,
+            100 / speak.rate,
+        )
+    }
+
+    private speaking(message: string, index: number, rate:number)
+    {
+        let time = rate
+        const char = message.at(index)
+        if (char === ' ') {
             this.intensity = 0.0
-        } else if (intensity > 1.0) {
+        } else if (
+            char === '.'
+            || char === '?'
+            || char === '!'
+            || char === ','
+            || char === ';'
+            || char === ':'
+        ) {
+            time *= 2
+            this.intensity = 0.0
+        } else if (
+            char === 'a'
+            || char === 'e'
+            || char === 'i'
+            || char === 'o'
+            || char === 'u'
+        ) {
             this.intensity = 1.0
         } else {
-            this.intensity = intensity
+            this.intensity = 0.5
+        }
+        if (index > message.length) {
+            this.intensity = 0.0
+        } else {
+            setTimeout(() => {
+                this.speaking(message, index + 1, rate)
+            }, time)
         }
     }
 
@@ -84,9 +125,9 @@ export class Agent {
             const offset = this.wave(i++)
             vertex.fromBufferAttribute(position, index)
             vertex.set(
-                Math.cos(angle) * offset,
+                Math.cos(angle) * offset * this.ray,
                 vertex.y,
-                Math.sin(angle) * offset,
+                Math.sin(angle) * offset * this.ray,
             )
             position.setXYZ(index, vertex.x, vertex.y, vertex.z)
         }
@@ -127,7 +168,7 @@ export class Agent {
         let sin = Math.sin(balance * angle)
         let cos = Math.sin((1.0 - balance) * angle)
         let value = external * sin + internal * cos
-        value += 0.8
+        value += 1.0
         return value
     }
 

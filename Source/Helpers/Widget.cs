@@ -16,5 +16,15 @@ namespace Application.Source.Helpers
             Build();
             StateHasChanged();
         }
+
+        protected virtual void Rendered() { }
+
+        protected override void OnAfterRender(bool firstRender)
+        {
+            if (firstRender)
+            {
+                Rendered();
+            }
+        }
     }
 }

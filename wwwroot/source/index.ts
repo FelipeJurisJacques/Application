@@ -52,10 +52,12 @@ export function initializeAgent(helper: any): Agent {
 
 declare global {
     interface Window {
+        agent: Agent
         listenResize: typeof listenResize
         initializeAgent: typeof initializeAgent
     }
 }
 
+window.agent = agent
 window.listenResize = listenResize
 window.initializeAgent = initializeAgent
