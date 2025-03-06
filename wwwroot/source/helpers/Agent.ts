@@ -15,6 +15,7 @@ export class Agent {
     private points_depth: number
     private points_length: number
     private points_geometry: THREE.BufferGeometry
+    private ring_transforms: THREE.RingGeometry[]
     
     public constructor() {
         this.ray = 0.5
@@ -25,11 +26,12 @@ export class Agent {
         this.left = 0
         this.right = 0
         this.delta = 0.0
+        this.scene = new THREE.Scene()
         this.offset = 0.0
         this.intensity = 0.0
         this.points_depth = Math.round(16 * this.ray)
         this.points_length = length
-        this.scene = new THREE.Scene()
+        this.ring_transforms = []
 
         const gridHelper = new THREE.GridHelper(10, 10)
         this.scene.add(gridHelper)
@@ -58,6 +60,22 @@ export class Agent {
         const points = new THREE.Points(geometry, material)
         this.scene.add(points)
         this.points_geometry = geometry
+
+        const ring_geometry = new THREE.RingGeometry(
+            0.3,
+            0.4,
+            32,
+            1,
+            Math.PI / 2,
+            Math.PI
+        )
+        const ring_material = new THREE.MeshBasicMaterial({
+            color: 0x00ff00,
+            side: THREE.DoubleSide
+        })
+        const ring = new THREE.Mesh(ring_geometry, ring_material)
+        this.ring_transforms.push(ring)
+        this.scene.add(ring)
     }
 
     public get Scene(): THREE.Scene {

@@ -1,20 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+    <title>Semicírculo com Three.js</title>
     <style>
-        button {
-            background-color: red;
-            width: 100px;
-            height: 100px;
+        body {
+            margin: 0;
+        }
+
+        canvas {
+            display: block;
         }
     </style>
-    <button type="button" class="btn-primary" style="clip-path: circle(50%);">
-        <button class="btn-secondary">Botão maior</button>
-    </button>
+</head>
+
+<body>
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.156.0/build/three.module.js';
+        // Configuração da cena, câmera e renderizador
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        function segment(length, radius) {
+            const segment = (length * 0.5 + length * radius * 0.5) * 4.0
+            return Math.round((length * 0.5 + length * radius * 0.5) * 4.0)
+        }
+
+        function ring(angle, length, radius, width) {
+            return new THREE.RingGeometry(
+                radius,
+                radius + width,
+                Math.round((length * 0.5 + length * radius * 0.5) * 4.0),
+                1,
+                angle,
+                length
+            )
+        }
+
+        const geometry = ring(Math.PI * 3, Math.PI, 0.5, 0.05);
+
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+        const semicircle = new THREE.Mesh(geometry, material);
+        scene.add(semicircle);
+
+        // Posicionando a câmera
+        camera.position.z = 5;
+
+        // Função de animação
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Rotacionando o semicírculo (opcional)
+            semicircle.rotation.z += 0.01;
+
+            // Renderizando a cena
+            renderer.render(scene, camera);
+        }
+
+        // Iniciando a animação
+        animate();
+    </script>
 </body>
+
 </html>
